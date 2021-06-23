@@ -1,0 +1,14 @@
+/.idea/.idea.Archiver/.idea/
+/Logs/
+/obj/Debug/
+/Temp/
+/Archiver.sln
+/UniTask.TextMeshPro.csproj
+/UniTask.Linq.csproj
+/UniTask.Editor.csproj
+/UniTask.DOTween.csproj
+/UniTask.csproj
+/UniTask.Addressables.csproj
+/Newtonsoft.Json.UnityConverters.Editor.csproj
+/Newtonsoft.Json.UnityConverters.csproj
+/Assembly-CSharp.csproj
