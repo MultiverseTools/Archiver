@@ -1,1 +1,59 @@
-{"Version":"0.0.0.0","ExamplePlayerInfo":[{"Hp":746,"Trigger":false,"Enemies":[{"Atk":3966,"Distance":6435.0}],"HpInfo":{"Hp":0,"TestValue":0},"TriggerState":0}]}
+{
+  "Version": "0.0.0.0",
+  "Enemies": [
+    {
+      "Atk": 20121,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 31834,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 10098,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 20925,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 33903,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 90724,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    },
+    {
+      "Atk": 95466,
+      "AtkInfo": {
+        "AtkSet": null,
+        "OnePunchKill": false
+      }
+    }
+  ],
+  "Player": [
+    {
+      "Hp": 123
+    }
+  ]
+}
