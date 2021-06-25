@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace EFAS.Archiver.Example
 {
+    /// <summary>
+    /// 示例
+    /// </summary>
     public class Example : MonoBehaviour
     {
         private string m_archiverPath;
@@ -41,6 +44,9 @@ namespace EFAS.Archiver.Example
             }
         }
 
+        /// <summary>
+        /// 添加一个玩家
+        /// </summary>
         private void AddPlayer()
         {
             Debug.Log("AddPlayer");
@@ -50,9 +56,13 @@ namespace EFAS.Archiver.Example
                 Hp = Random.Range(0, 100000),
             };
 
+            // 添加存档目标
             ArchiverManager.AddArchiver(player);
         }
 
+        /// <summary>
+        /// 添加一个敌人
+        /// </summary>
         private void AddEnemy()
         {
             Debug.Log("AddEnemy");
@@ -62,9 +72,13 @@ namespace EFAS.Archiver.Example
                 Atk = Random.Range(0, 100000),
             };
 
+            // 添加存档目标
             ArchiverManager.AddArchiver(enemy);
         }
 
+        /// <summary>
+        /// 保存存档
+        /// </summary>
         private void Save()
         {
             Debug.Log("Save");
@@ -72,11 +86,15 @@ namespace EFAS.Archiver.Example
 
             async UniTaskVoid _Save()
             {
+                // 保存存档
                 await ArchiverManager.SaveArchiver(ArchiverManager.s_archiver, m_archiverPath);
                 Debug.Log("Save Complete");
             }
         }
 
+        /// <summary>
+        /// 加载存档并升级
+        /// </summary>
         private void LoadAndUpgrade()
         {
             Debug.Log("LoadAndUpgrade");
@@ -85,8 +103,10 @@ namespace EFAS.Archiver.Example
             async UniTaskVoid _Load()
             {
                 var archiver = new Archiver();
+                // 从指定位置读取存档
                 await ArchiverManager.LoadArchiver(archiver, m_archiverPath);
                 Debug.Log("Load Complete");
+                // 保存存档到指定位置
                 await ArchiverManager.SaveArchiver(archiver, m_upgradeArchiverPath);
                 Debug.Log("Save Complete");
             }
