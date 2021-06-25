@@ -13,11 +13,11 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2b82f8c2-9030-bbe6-ba3c-2825df2a50f6}</ProjectGuid>
+    <ProjectGuid>{5ed02ba7-1fd3-4a25-16ee-532fd8d4e5a3}</ProjectGuid>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+    <AssemblyName>EFAS.Archiver.Editor</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseDirectory>.</BaseDirectory>
@@ -52,13 +52,15 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
+     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverContentData.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ConstantValue.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\EditorUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
+     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
      <None Include="Assets\Archiver\Editor\Resources\Template\ClassTemplate.txt" />
+     <None Include="Assets\Archiver\Editor\EFAS.Archiver.Editor.asmdef" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
@@ -650,71 +652,23 @@
  <Reference Include="System.Xml.XPath.XDocument">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/Facades/System.Xml.XPath.XDocument.dll</HintPath>
  </Reference>
+ <Reference Include="UnityEditor.UI">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.UI">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.TestRunner">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEditor.TestRunner">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
  </Reference>
- <Reference Include="Unity.VSCode.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.TextMeshPro.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.VisualStudio.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.VisualStudio.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Timeline.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Timeline">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
- </Reference>
- <Reference Include="Unity.TextMeshPro">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
- </Reference>
- <Reference Include="UnityEditor.UI">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
- </Reference>
- <Reference Include="Unity.PlasticSCM.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Rider.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
- </Reference>
- <Reference Include="UnityEngine.UI">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
- </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="Assembly-CSharp.csproj">
-      <Project>{76682dcb-db34-e1fc-b1a0-5521d73df0f5}</Project>
-      <Name>Assembly-CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.TextMeshPro.csproj">
-      <Project>{7235176a-d2bc-2cb0-5311-a1e47208df9c}</Project>
-      <Name>UniTask.TextMeshPro</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.DOTween.csproj">
-      <Project>{031a1c46-970b-00a4-3f2c-d08d8a0ccf29}</Project>
-      <Name>UniTask.DOTween</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.csproj">
-      <Project>{dd8a85ca-40eb-870d-4d90-9939d6668ef1}</Project>
-      <Name>UniTask</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.Addressables.csproj">
-      <Project>{33b1547e-3ef2-a8c2-7a36-6c461b73e156}</Project>
-      <Name>UniTask.Addressables</Name>
-    </ProjectReference>
-    <ProjectReference Include="Newtonsoft.Json.UnityConverters.csproj">
-      <Project>{dcf1e015-9845-b4cd-0715-387722d2092d}</Project>
-      <Name>Newtonsoft.Json.UnityConverters</Name>
-    </ProjectReference>
-    <ProjectReference Include="UniTask.Linq.csproj">
-      <Project>{9d079a33-c52a-28c8-ecc6-f23a2d7ec59e}</Project>
-      <Name>UniTask.Linq</Name>
+    <ProjectReference Include="EFAS.Archiver.csproj">
+      <Project>{3895c74f-796c-d33a-8389-8bc4acbf0e79}</Project>
+      <Name>EFAS.Archiver</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

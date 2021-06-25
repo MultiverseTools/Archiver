@@ -1,26 +1,25 @@
 ﻿// Copyright (c) 2015 Multiverse
 // Author:      Sora
-// CreateTime:  2021-06-09-16:59
+// CreateTime:  2021-06-25-20:08
 
 using System;
 
 namespace EFAS.Archiver
 {
     /// <summary>
-    /// 存档内容标签
+    /// 存档物体
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = false)]
     public class ArchiverAttribute : Attribute
     {
         /// <summary>
-        /// 分组名称
+        /// 存档文件位置
         /// </summary>
-        public readonly string GroupName;
+        public readonly string GenerateFoldPath;
 
-        /// <summary>
-        /// 设置存档目标
-        /// </summary>
-        /// <param name="_groupName">存档路径</param>
-        public ArchiverAttribute(string _groupName) { GroupName = _groupName; }
+        public ArchiverAttribute(string _generateFoldPath)
+        {
+            GenerateFoldPath = _generateFoldPath;
+        }
     }
 }

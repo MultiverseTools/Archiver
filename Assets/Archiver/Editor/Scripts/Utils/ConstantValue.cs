@@ -10,6 +10,16 @@ namespace EFAS.Archiver
     public static class ConstantValue
     {
         /// <summary>
+        /// 脚本生成目录
+        /// </summary>
+        public const string k_generateFolderPath = "#GENERATE_FOLDER_PATH#";
+
+        /// <summary>
+        /// 类名
+        /// </summary>
+        public const string k_className = "#CLASS_NAME#";
+
+        /// <summary>
         /// 存档数据类型字典
         /// </summary>
         public const string k_archiverDataTypeMap = "#ARCHIVER_DATA_TYPE_MAP#";

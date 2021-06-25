@@ -4,12 +4,10 @@
 
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 
 namespace EFAS.Archiver
 {
@@ -18,16 +16,6 @@ namespace EFAS.Archiver
     /// </summary>
     public static class ArchiverManager
     {
-        /// <summary>
-        /// 游戏版本号
-        /// </summary>
-        public static readonly Version s_gameVersion = new Version(0, 0, 0, 0);
-
-        /// <summary>
-        /// 存档位置
-        /// </summary>
-        public static string s_archiverFilePath => Path.Combine(Application.dataPath, "Archiver.json");
-
         /// <summary>
         /// 每次处理的保存数据的数量
         /// </summary>
@@ -39,40 +27,12 @@ namespace EFAS.Archiver
         private static int s_batchIndex = 0;
 
         /// <summary>
-        /// 存档内容
-        /// </summary>
-        public static Archiver s_archiver = new Archiver();
-
-        /// <summary>
-        /// 添加存档内容
-        /// </summary>
-        /// <param name="_object">内容</param>
-        public static void AddArchiver(object _object) { s_archiver.Add(_object); }
-
-        /// <summary>
-        /// 移除存档内容
-        /// </summary>
-        /// <param name="_object">内容</param>
-        public static void RemoveArchiver(object _object) { s_archiver.Remove(_object); }
-
-        /// <summary>
-        /// 保存存档到<see cref="s_archiver"/>
-        /// </summary>
-        /// <param name="_completeAction">存档完成时回调</param>
-        public static void SaveArchiver(Action _completeAction) => SaveArchiver(s_archiver, s_archiverFilePath, _completeAction);
-
-        /// <summary>
-        /// 保存存档到<see cref="s_archiver"/>
-        /// </summary>
-        public static UniTask SaveArchiver() => SaveArchiver(s_archiver, s_archiverFilePath);
-
-        /// <summary>
         /// 保存指定存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">存档路径</param>
         /// <param name="_completeAction">存档完成时回调</param>
-        public static void SaveArchiver(Archiver _archiver, string _path, Action _completeAction)
+        public static void SaveArchiver(IArchiver _archiver, string _path, Action _completeAction)
         {
             _SaveArchiver().Forget();
 
@@ -88,7 +48,7 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">存档路径</param>
-        public static UniTask SaveArchiver(Archiver _archiver, string _path)
+        public static UniTask SaveArchiver(IArchiver _archiver, string _path)
         {
             if (File.Exists(_path))
             {
@@ -99,23 +59,12 @@ namespace EFAS.Archiver
         }
 
         /// <summary>
-        /// 读取存档并且升级存档到<see cref="s_archiver"/>
-        /// </summary>
-        /// <param name="_completeAction">读取完成回调</param>
-        public static void LoadArchiver(Action _completeAction) => LoadArchiver(s_archiver, s_archiverFilePath, _completeAction);
-
-        /// <summary>
-        /// 读取存档并且升级存档到<see cref="s_archiver"/>
-        /// </summary>
-        public static UniTask LoadArchiver() => LoadArchiver(s_archiver, s_archiverFilePath);
-
-        /// <summary>
         /// 读取存档并且升级存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
         /// <param name="_completeAction">读取完成回调</param>
-        public static void LoadArchiver(Archiver _archiver, string _path, Action _completeAction)
+        public static void LoadArchiver(IArchiver _archiver, string _path, Action _completeAction)
         {
             _LoadArchiver().Forget();
 
@@ -131,7 +80,7 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
-        public static async UniTask LoadArchiver(Archiver _archiver, string _path)
+        public static async UniTask LoadArchiver(IArchiver _archiver, string _path)
         {
             if (File.Exists(_path))
             {
@@ -151,7 +100,7 @@ namespace EFAS.Archiver
                             propertyName = (string) reader.Value;
 
                             // 版本号
-                            if (propertyName == nameof(Archiver.Version))
+                            if (propertyName == nameof(IArchiver.Version))
                             {
                                 // 设置版本号string
                                 var versionString = reader.ReadAsString();
@@ -184,7 +133,7 @@ namespace EFAS.Archiver
                                 var endPosition = reader.LinePosition + 1;
                                 // 通过字段名称获取对应的类型
                                 if (string.IsNullOrEmpty(propertyName)) throw new Exception($"属性名称不能为空");
-                                var deserializeObjectType = Archiver.s_archiverDataTypeMap[propertyName];
+                                var deserializeObjectType = _archiver.ArchiverDataTypeMap[propertyName];
                                 // 获取json对应的实体
                                 var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
                                 await CheckWaitBatch();
@@ -248,40 +197,35 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_savePath">存档路径</param>
-        private static async UniTask CollectionData(Archiver _archiver, string _savePath)
+        private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
         {
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {
                 // 开始写入json
                 jsonTextWriter.WriteStartObject();
+                // 保存版本号
+                jsonTextWriter.WritePropertyName(nameof(IArchiver.Version));
+                var version = _archiver.GetType().GetProperty(nameof(IArchiver.Version)).GetValue(_archiver);
+                jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(version, Formatting.None));
 
                 // 遍历写入所有字段
-                foreach (var fieldInfo in typeof(Archiver).GetFields(BindingFlags.Instance | BindingFlags.Public))
+                foreach (var fieldInfo in _archiver.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
                     jsonTextWriter.WritePropertyName(fieldInfo.Name);
                     var fieldValue = fieldInfo.GetValue(_archiver);
 
-                    // 保存版本号
-                    if (fieldInfo.Name == nameof(Archiver.Version))
+                    jsonTextWriter.WriteStartArray();
+                    var iterator = (IEnumerable) fieldValue;
+
+                    foreach (var item in iterator)
                     {
-                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(fieldValue, Formatting.None));
+                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None));
+
+                        // 同时处理量不能过大
+                        await CheckWaitBatch();
                     }
-                    // 当前只有List类型数据
-                    else
-                    {
-                        jsonTextWriter.WriteStartArray();
-                        var iterator = (IEnumerable) fieldValue;
 
-                        foreach (var item in iterator)
-                        {
-                            jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None));
-
-                            // 同时处理量不能过大
-                            await CheckWaitBatch();
-                        }
-
-                        jsonTextWriter.WriteEndArray();
-                    }
+                    jsonTextWriter.WriteEndArray();
                 }
 
                 jsonTextWriter.WriteEndObject();

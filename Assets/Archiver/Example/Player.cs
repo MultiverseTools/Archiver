@@ -9,7 +9,7 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 玩家数据
     /// </summary>
-    // [Archiver("Player")]
+    [ArchiverContent(typeof(ExampleArchiver), "Player")]
     public class Player
     {
         /// <summary>
