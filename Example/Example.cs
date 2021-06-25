@@ -2,10 +2,8 @@
 // Author:      Sora
 // CreateTime:  2021-06-19-15:31
 
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace EFAS.Archiver.Example
 {
@@ -22,9 +20,14 @@ namespace EFAS.Archiver.Example
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            if (Input.GetKeyDown(KeyCode.P))
             {
-                Add();
+                AddPlayer();
+            }
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                AddEnemy();
             }
 
             if (Input.GetKeyDown(KeyCode.S))
@@ -34,29 +37,32 @@ namespace EFAS.Archiver.Example
 
             if (Input.GetKeyDown(KeyCode.L))
             {
-                Load();
+                LoadAndUpgrade();
             }
         }
 
-        private void Add()
+        private void AddPlayer()
         {
-            Debug.Log("Add");
+            Debug.Log("AddPlayer");
 
-            var playerInfo = new PlayerInfo()
+            var player = new Player()
             {
-                Hp      = Random.Range(0, 10000),
-                Trigger = Random.Range(0, 2) == 1,
-                Enemies = new List<Enemy>()
-                {
-                    new Enemy()
-                    {
-                        Atk      = Random.Range(0, 10000),
-                        Distance = Random.Range(0, 10000),
-                    },
-                },
+                Hp = Random.Range(0, 100000),
             };
 
-            ArchiverManager.AddArchiver(playerInfo);
+            ArchiverManager.AddArchiver(player);
+        }
+
+        private void AddEnemy()
+        {
+            Debug.Log("AddEnemy");
+
+            var enemy = new Enemy()
+            {
+                Atk = Random.Range(0, 100000),
+            };
+
+            ArchiverManager.AddArchiver(enemy);
         }
 
         private void Save()
@@ -71,9 +77,9 @@ namespace EFAS.Archiver.Example
             }
         }
 
-        private void Load()
+        private void LoadAndUpgrade()
         {
-            Debug.Log("Load");
+            Debug.Log("LoadAndUpgrade");
             _Load().Forget();
 
             async UniTaskVoid _Load()

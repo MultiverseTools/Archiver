@@ -54,7 +54,7 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_object">内容</param>
         public static void RemoveArchiver(object _object) { s_archiver.Remove(_object); }
-        
+
         /// <summary>
         /// 保存存档到<see cref="s_archiver"/>
         /// </summary>
@@ -65,7 +65,7 @@ namespace EFAS.Archiver
         /// 保存存档到<see cref="s_archiver"/>
         /// </summary>
         public static UniTask SaveArchiver() => SaveArchiver(s_archiver, s_archiverFilePath);
-        
+
         /// <summary>
         /// 保存指定存档
         /// </summary>
@@ -99,18 +99,18 @@ namespace EFAS.Archiver
         }
 
         /// <summary>
-        /// 读取存档到<see cref="s_archiver"/>
+        /// 读取存档并且升级存档到<see cref="s_archiver"/>
         /// </summary>
         /// <param name="_completeAction">读取完成回调</param>
         public static void LoadArchiver(Action _completeAction) => LoadArchiver(s_archiver, s_archiverFilePath, _completeAction);
-        
+
         /// <summary>
-        /// 读取存档到<see cref="s_archiver"/>
+        /// 读取存档并且升级存档到<see cref="s_archiver"/>
         /// </summary>
         public static UniTask LoadArchiver() => LoadArchiver(s_archiver, s_archiverFilePath);
 
         /// <summary>
-        /// 读取存档
+        /// 读取存档并且升级存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
@@ -127,7 +127,7 @@ namespace EFAS.Archiver
         }
 
         /// <summary>
-        /// 读取存档
+        /// 读取存档并且升级存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
@@ -136,6 +136,8 @@ namespace EFAS.Archiver
             if (File.Exists(_path))
             {
                 var propertyName = string.Empty;
+                // 升级后的版本号
+                Version upgradeVersion = null;
                 // 读取文件json
                 var json   = File.ReadAllText(_path);
                 var reader = new JsonTextReader(new StringReader(json));
@@ -166,8 +168,6 @@ namespace EFAS.Archiver
                         case JsonToken.StartArray:
                             // 读取Array第一个元素
                             reader.Read();
-                            // 升级后的版本号
-                            Version upgradeVersion = null;
 
                             while (reader.TokenType != JsonToken.EndArray)
                             {
@@ -177,14 +177,14 @@ namespace EFAS.Archiver
                                 // TokenType: StartObject
                                 // 记录开始位置
                                 var startPosition = reader.LinePosition - 1;
-                                // 添加 Object内容
+                                // 跳过Object内容
                                 reader.Skip();
                                 // TokenType: EndObject
                                 // 记录结束位置
                                 var endPosition = reader.LinePosition + 1;
                                 // 通过字段名称获取对应的类型
                                 if (string.IsNullOrEmpty(propertyName)) throw new Exception($"属性名称不能为空");
-                                var deserializeObjectType = Archiver.s_fieldTypeMap[propertyName];
+                                var deserializeObjectType = Archiver.s_archiverDataTypeMap[propertyName];
                                 // 获取json对应的实体
                                 var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
                                 await CheckWaitBatch();
@@ -192,27 +192,11 @@ namespace EFAS.Archiver
                                 /*
                                  * 存档升级
                                  */
-                                // 获取所有升级Attribute
-                                var archiverUpgradeAttributes = new List<ArchiverUpgradeAttribute>(deserializeObjectType.GetCustomAttributes<ArchiverUpgradeAttribute>());
-                                var checkVersion              = new Version(0, 0, 0, 0);
-
-                                // 检测Attribute是否按照从低到高版本号顺序
-                                foreach (var archiverUpgradeAttribute in archiverUpgradeAttributes)
-                                {
-                                    var version = Version.Parse(archiverUpgradeAttribute.Version);
-
-                                    if (checkVersion <= version)
-                                    {
-                                        checkVersion = version;
-                                    }
-                                    else
-                                    {
-                                        throw new Exception($"\"{deserializeObjectType.FullName}\"存档升级\"{nameof(ArchiverUpgradeAttribute)}\"版本号必须从低到高排列.");
-                                    }
-                                }
-
+#if UNITY_EDITOR
+                                deserializeObjectType.CheckUpgradeValid();
+#endif
                                 // 升级存档
-                                foreach (var archiverUpgradeAttribute in archiverUpgradeAttributes)
+                                foreach (var archiverUpgradeAttribute in deserializeObjectType.GetCustomAttributes<ArchiverUpgradeAttribute>())
                                 {
                                     var version = Version.Parse(archiverUpgradeAttribute.Version);
 
@@ -220,42 +204,24 @@ namespace EFAS.Archiver
                                     if (_archiver.Version < version)
                                     {
                                         // 获取升级方法
-                                        var upgradeMethod     = deserializeObjectType.GetMethod(archiverUpgradeAttribute.UpgradeFunctionName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-                                        var isUpgradeComplete = upgradeMethod != null;
+                                        var upgradeMethod = deserializeObjectType.GetMethod(archiverUpgradeAttribute.UpgradeFunctionName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-                                        if (isUpgradeComplete)
-                                        {
-                                            // 判断升级函数参数
-                                            var parameterInfoArray = upgradeMethod.GetParameters();
-                                            // 参数必须为一个且类型为存档类型
-                                            isUpgradeComplete = parameterInfoArray.Length == 1 && parameterInfoArray[0].ParameterType == deserializeObjectType;
-
-                                            if (isUpgradeComplete)
+                                        // 调用升级函数
+                                        deserializeObject = upgradeMethod.Invoke(null,
+                                            new[]
                                             {
-                                                // 调用升级函数
-                                                deserializeObject = upgradeMethod.Invoke(null,
-                                                    new[]
-                                                    {
-                                                        deserializeObject
-                                                    });
+                                                deserializeObject
+                                            });
 
-                                                isUpgradeComplete = deserializeObject != null;
-                                            }
+                                        // 升级版本号
+                                        if (upgradeVersion == null || upgradeVersion < version)
+                                        {
+                                            upgradeVersion = new Version(version.ToString());
                                         }
 
-                                        if (isUpgradeComplete)
+                                        if (deserializeObject == null)
                                         {
-                                            if (upgradeVersion != version)
-                                            {
-                                                // 升级版本号
-                                                upgradeVersion = new Version(version.ToString());
-                                            }
-                                        }
-                                        else
-                                        {
-                                            throw new Exception($"\"{deserializeObjectType.FullName}.{archiverUpgradeAttribute.UpgradeFunctionName}\"升级方法错误或返回值为null.任选一种方法:\n"
-                                                              + $"private static {deserializeObjectType.Name} {archiverUpgradeAttribute.UpgradeFunctionName}({deserializeObjectType.Name} _source)\n"
-                                                              + $"public static {deserializeObjectType.Name} {archiverUpgradeAttribute.UpgradeFunctionName}({deserializeObjectType.Name} _source)");
+                                            throw new Exception($"\"{deserializeObjectType.FullName}.{archiverUpgradeAttribute.UpgradeFunctionName}\"返回值为null.");
                                         }
                                     }
                                 }
@@ -266,13 +232,13 @@ namespace EFAS.Archiver
                                 reader.Read();
                             }
 
-                            if (upgradeVersion != null)
-                            {
-                                _archiver.Version = upgradeVersion;
-                            }
-
                             break;
                     }
+                }
+
+                if (upgradeVersion != null)
+                {
+                    _archiver.Version = upgradeVersion;
                 }
             }
         }
