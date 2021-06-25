@@ -2,6 +2,7 @@
 // Author:      Sora
 // CreateTime:  2021-06-25-13:50
 
+using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,7 +17,17 @@ namespace EFAS.Archiver
         /// <summary>
         /// 脚本保存路径
         /// </summary>
-        public readonly string ScriptPath;
+        public string ScriptPath => $"{GenerateFolderPath}/{GenerateType.Name}.cs";
+
+        /// <summary>
+        /// 生成目录
+        /// </summary>
+        public readonly string GenerateFolderPath;
+
+        /// <summary>
+        /// 生成类型
+        /// </summary>
+        public readonly Type GenerateType;
 
         /// <summary>
         /// 存档数据类型字典builder
@@ -46,10 +57,11 @@ namespace EFAS.Archiver
         /// <summary>
         /// 创建脚本
         /// </summary>
-        /// <param name="_scriptPath">保存路径</param>
-        public ScriptContent(string _scriptPath)
+        /// <param name="_generateFolderPath">保存路径</param>
+        public ScriptContent(string _generateFolderPath, Type _genearteType)
         {
-            ScriptPath = _scriptPath;
+            GenerateFolderPath = _generateFolderPath;
+            GenerateType       = _genearteType;
 
             m_archiverDataTypeBuilder   = new StringBuilder();
             m_archiverDataSetBuilder    = new StringBuilder();
@@ -61,11 +73,11 @@ namespace EFAS.Archiver
         /// <summary>
         /// 为FieldTypeMap添加元素
         /// </summary>
-        /// <param name="_archiverData">存档数据</param>
-        public void AppendFieldTypeIntoMap(ArchiverData _archiverData)
+        /// <param name="_archiverContentData">存档数据</param>
+        public void AppendFieldTypeIntoMap(ArchiverContentData _archiverContentData)
         {
             // "GROUP_NAME", typeof(TYPE) 
-            var content = $"\"{_archiverData.GroupName}\", typeof({_archiverData.Type.FullName})";
+            var content = $"\"{_archiverContentData.GroupName}\", typeof({_archiverContentData.Type.FullName})";
             // {"GROUP_NAME", typeof(TYPE)} 
             m_archiverDataTypeBuilder.AppendLine("{" + content + "},");
         }
@@ -73,25 +85,25 @@ namespace EFAS.Archiver
         /// <summary>
         /// 添加存档容器
         /// </summary>
-        /// <param name="_archiverData">存档数据</param>
-        public void AppendArchiverDataSet(ArchiverData _archiverData)
+        /// <param name="_archiverContentData">存档数据</param>
+        public void AppendArchiverDataSet(ArchiverContentData _archiverContentData)
         {
             // public List<TYPE_NAME> GROUP_NAME = new List<TYPE_NAME>();
-            var content = $"public List<{_archiverData.Type.FullName}> {_archiverData.GroupName} = new List<{_archiverData.Type.FullName}>();";
+            var content = $"public List<{_archiverContentData.Type.FullName}> {_archiverContentData.GroupName} = new List<{_archiverContentData.Type.FullName}>();";
             m_archiverDataSetBuilder.AppendLine(content);
         }
 
         /// <summary>
         /// 添加存档数据
         /// </summary>
-        /// <param name="_archiverData"></param>
-        public void AppendAddArchiverData(ArchiverData _archiverData)
+        /// <param name="_archiverContentData"></param>
+        public void AppendAddArchiverData(ArchiverContentData _archiverContentData)
         {
-            var paramName = _archiverData.Type.Name.FirstCharToLowerCase();
+            var paramName = _archiverContentData.Type.Name.FirstCharToLowerCase();
             // case TYPE_NAME tYPE_NAME:
-            m_archiverDataAddBuilder.AppendLine($"case {_archiverData.Type.FullName} {paramName}:");
+            m_archiverDataAddBuilder.AppendLine($"case {_archiverContentData.Type.FullName} {paramName}:");
             //      GROUP_NAME.Add(tYPE_NAME);
-            m_archiverDataAddBuilder.AppendLine($"\t{_archiverData.GroupName}.Add({paramName});");
+            m_archiverDataAddBuilder.AppendLine($"\t{_archiverContentData.GroupName}.Add({paramName});");
             //      break;
             m_archiverDataAddBuilder.AppendLine($"\tbreak;");
             m_archiverDataAddBuilder.AppendLine();
@@ -100,14 +112,14 @@ namespace EFAS.Archiver
         /// <summary>
         /// 移除存档数据
         /// </summary>
-        /// <param name="_archiverData"></param>
-        public void AppendRemoveArchiverData(ArchiverData _archiverData)
+        /// <param name="_archiverContentData"></param>
+        public void AppendRemoveArchiverData(ArchiverContentData _archiverContentData)
         {
-            var paramName = _archiverData.Type.Name.FirstCharToLowerCase();
+            var paramName = _archiverContentData.Type.Name.FirstCharToLowerCase();
             // case TYPE_NAME tYPE_NAME:
-            m_archiverDataRemoveBuilder.AppendLine($"case {_archiverData.Type.FullName} {paramName}:");
+            m_archiverDataRemoveBuilder.AppendLine($"case {_archiverContentData.Type.FullName} {paramName}:");
             //      GROUP_NAME.Remove(tYPE_NAME);
-            m_archiverDataRemoveBuilder.AppendLine($"\t{_archiverData.GroupName}.Remove({paramName});");
+            m_archiverDataRemoveBuilder.AppendLine($"\t{_archiverContentData.GroupName}.Remove({paramName});");
             //      break;
             m_archiverDataRemoveBuilder.AppendLine($"\tbreak;");
             m_archiverDataRemoveBuilder.AppendLine();
@@ -119,10 +131,24 @@ namespace EFAS.Archiver
         public void CompleteScript()
         {
             /*
+            * 设置存档路径
+            */
+            var regex = new Regex(ConstantValue.k_generateFolderPath);
+            var match = regex.Match(m_scriptContent);
+            m_scriptContent = m_scriptContent.Replace(ConstantValue.k_generateFolderPath, string.Empty);
+            m_scriptContent = m_scriptContent.Insert(match.Index, GenerateFolderPath);
+            /*
+             * 修改类名
+             */
+            regex           = new Regex(ConstantValue.k_className);
+            match           = regex.Match(m_scriptContent);
+            m_scriptContent = m_scriptContent.Replace(ConstantValue.k_className, string.Empty);
+            m_scriptContent = m_scriptContent.Insert(match.Index, GenerateType.Name);
+            /*
              * 存档数据类型字典
              */
-            var regex = new Regex(ConstantValue.k_archiverDataTypeMap);
-            var match = regex.Match(m_scriptContent);
+            regex           = new Regex(ConstantValue.k_archiverDataTypeMap);
+            match           = regex.Match(m_scriptContent);
             m_scriptContent = m_scriptContent.Replace(ConstantValue.k_archiverDataTypeMap, string.Empty);
             m_scriptContent = m_scriptContent.Insert(match.Index, m_archiverDataTypeBuilder.ToString().Trim().AddTabForContent(3));
             /*

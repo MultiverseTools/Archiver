@@ -8,15 +8,16 @@ namespace EFAS.Archiver
     /// <summary>
     /// 存档内容
     /// </summary>
-    [Archiver("#GENERATE_FOLDER_PATH#")]
-    public class #CLASS_NAME# : IArchiver
+    [Archiver("Assets/Archiver/Example")]
+    public class ExampleArchiver : IArchiver
     {
         /// <summary>
         /// 存档数据类型字典
         /// </summary>
         public Dictionary<string, Type> ArchiverDataTypeMap { get; } = new Dictionary<string, Type>()
         {
-#ARCHIVER_DATA_TYPE_MAP#
+			{"Enemies", typeof(EFAS.Archiver.Example.Enemy)},
+			{"Player", typeof(EFAS.Archiver.Example.Player)},
         };
 
         /// <summary>
@@ -25,7 +26,8 @@ namespace EFAS.Archiver
         [Newtonsoft.Json.JsonProperty]
         public Version Version { get; set; } = new Version(0, 0, 0, 0);
 
-#ARCHIVER_DATA_SET#
+		public List<EFAS.Archiver.Example.Enemy> Enemies = new List<EFAS.Archiver.Example.Enemy>();
+		public List<EFAS.Archiver.Example.Player> Player = new List<EFAS.Archiver.Example.Player>();
         
         /// <summary>
         /// 添加元素
@@ -35,7 +37,13 @@ namespace EFAS.Archiver
         {
             switch (_object)
             {
-#ARCHIVER_DATA_ADD#
+				case EFAS.Archiver.Example.Enemy enemy:
+					Enemies.Add(enemy);
+					break;
+				
+				case EFAS.Archiver.Example.Player player:
+					Player.Add(player);
+					break;
             }
         }
 
@@ -47,7 +55,13 @@ namespace EFAS.Archiver
         {
             switch (_object)
             {
-#ARCHIVER_DATA_REMOVE#
+				case EFAS.Archiver.Example.Enemy enemy:
+					Enemies.Remove(enemy);
+					break;
+				
+				case EFAS.Archiver.Example.Player player:
+					Player.Remove(player);
+					break;
             }
         }
     }
