@@ -13,8 +13,7 @@ namespace EFAS.Archiver
         /// </summary>
         public static Dictionary<string, Type> s_archiverDataTypeMap = new Dictionary<string, Type>()
         {
-			{"Enemies", typeof(EFAS.Archiver.Example.Enemy)},
-			{"Player", typeof(EFAS.Archiver.Example.Player)},
+
         };
 
         /// <summary>
@@ -22,8 +21,7 @@ namespace EFAS.Archiver
         /// </summary>
         public Version Version = new Version(0, 0, 0, 0);
 
-		public List<EFAS.Archiver.Example.Enemy> Enemies = new List<EFAS.Archiver.Example.Enemy>();
-		public List<EFAS.Archiver.Example.Player> Player = new List<EFAS.Archiver.Example.Player>();
+
         
         /// <summary>
         /// 添加元素
@@ -33,13 +31,7 @@ namespace EFAS.Archiver
         {
             switch (_object)
             {
-				case EFAS.Archiver.Example.Enemy enemy:
-					Enemies.Add(enemy);
-					break;
-				
-				case EFAS.Archiver.Example.Player player:
-					Player.Add(player);
-					break;
+
             }
         }
 
@@ -51,13 +43,7 @@ namespace EFAS.Archiver
         {
             switch (_object)
             {
-				case EFAS.Archiver.Example.Enemy enemy:
-					Enemies.Remove(enemy);
-					break;
-				
-				case EFAS.Archiver.Example.Player player:
-					Player.Remove(player);
-					break;
+
             }
         }
     }
