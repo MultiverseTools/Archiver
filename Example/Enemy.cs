@@ -10,7 +10,7 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 敌人数据
     /// </summary>
-    [Archiver("Enemies")]
+    // [Archiver("Enemies")]
     // 升级Atk为Atk类型
     [ArchiverUpgrade("0.0.0.1", nameof(Upgrade0001))]
     // 可以添加多个升级Attribute, 注意: 版本号必须从小到大排列
