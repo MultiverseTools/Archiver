@@ -53,12 +53,18 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\Archiver\Scripts\Utils.cs" />
-     <Compile Include="Assets\Archiver\Scripts\ArchiverManager.cs" />
-     <Compile Include="Assets\Archiver\Scripts\ArchiverUpgradeAttribute.cs" />
-     <Compile Include="Assets\Archiver\Scripts\ArchiverContentAttribute.cs" />
-     <Compile Include="Assets\Archiver\Scripts\ArchiverAttribute.cs" />
+     <Compile Include="Assets\Archiver\Example\ExampleArchiver.cs" />
      <Compile Include="Assets\Archiver\Scripts\IArchiver.cs" />
-     <None Include="Assets\Archiver\Scripts\EFAS.Archiver.asmdef" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverAttribute.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverManager.cs" />
+     <Compile Include="Assets\Archiver\Example\Player.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverUpgradeAttribute.cs" />
+     <Compile Include="Assets\Archiver\Example\Example.cs" />
+     <Compile Include="Assets\Archiver\Example\Enemy.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverContentAttribute.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverElementAttribute.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverContentConvert.cs" />
+     <None Include="Assets\Archiver\EFAS.Archiver.asmdef" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>

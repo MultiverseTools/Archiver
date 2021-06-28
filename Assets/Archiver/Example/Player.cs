@@ -2,8 +2,6 @@
 // Author:      Sora
 // CreateTime:  2021-06-25-17:12
 
-using Newtonsoft.Json;
-
 namespace EFAS.Archiver.Example
 {
     /// <summary>
@@ -15,13 +13,12 @@ namespace EFAS.Archiver.Example
         /// <summary>
         /// 需要保存的数据
         /// </summary>
+        [ArchiverElement]
         public int Hp;
 
         /// <summary>
-        /// 不需要保存的数据添加[JsonIgnore]或[NonSerialized]
+        /// 不需要保存的数据添加不添加[ArchiverElement]
         /// </summary>
-        [JsonIgnore]
-        // [NonSerialized]
         public bool IsDied;
     }
 }

@@ -52,13 +52,13 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverContentData.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ConstantValue.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\EditorUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
      <None Include="Assets\Archiver\Editor\Resources\Template\ClassTemplate.txt" />
      <None Include="Assets\Archiver\Editor\EFAS.Archiver.Editor.asmdef" />
  <Reference Include="UnityEngine">

@@ -2,7 +2,6 @@
 // Author:      Sora
 // CreateTime:  2021-06-25-17:13
 
-using System;
 using System.Collections.Generic;
 
 namespace EFAS.Archiver.Example
@@ -22,13 +21,14 @@ namespace EFAS.Archiver.Example
         ///
         /// 数据只能升级不能删除
         /// </summary>
-        [Obsolete]
+        // [ArchiverElement]
         public int Atk;
 
         /// <summary>
         /// 升级后的数据
         /// 0.0.0.1升级数据
         /// </summary>
+        [ArchiverElement]
         public AtkInfo AtkInfo;
 
         /// <summary>

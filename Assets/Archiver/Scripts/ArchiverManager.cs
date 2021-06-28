@@ -17,6 +17,11 @@ namespace EFAS.Archiver
     public static class ArchiverManager
     {
         /// <summary>
+        /// 处理状态
+        /// </summary>
+        internal static PROCESS_STATUS s_processStatus;
+
+        /// <summary>
         /// 每次处理的保存数据的数量
         /// </summary>
         private const int k_batchCount = 10;
@@ -84,6 +89,7 @@ namespace EFAS.Archiver
         {
             if (File.Exists(_path))
             {
+                s_processStatus = PROCESS_STATUS.DESERIALIZE;
                 var propertyName = string.Empty;
                 // 升级后的版本号
                 Version upgradeVersion = null;
@@ -157,10 +163,10 @@ namespace EFAS.Archiver
 
                                         // 调用升级函数
                                         deserializeObject = upgradeMethod.Invoke(null,
-                                            new[]
-                                            {
-                                                deserializeObject
-                                            });
+                                                                                 new[]
+                                                                                 {
+                                                                                     deserializeObject
+                                                                                 });
 
                                         // 升级版本号
                                         if (upgradeVersion == null || upgradeVersion < version)
@@ -189,6 +195,8 @@ namespace EFAS.Archiver
                 {
                     _archiver.Version = upgradeVersion;
                 }
+
+                s_processStatus = PROCESS_STATUS.NONE;
             }
         }
 
@@ -199,6 +207,7 @@ namespace EFAS.Archiver
         /// <param name="_savePath">存档路径</param>
         private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
         {
+            s_processStatus = PROCESS_STATUS.SERIALIZE;
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {
                 // 开始写入json
@@ -230,6 +239,8 @@ namespace EFAS.Archiver
 
                 jsonTextWriter.WriteEndObject();
             }
+
+            s_processStatus = PROCESS_STATUS.NONE;
         }
 
         /// <summary>
@@ -242,6 +253,27 @@ namespace EFAS.Archiver
                 s_batchIndex = 0;
                 await UniTask.WaitForEndOfFrame();
             }
+        }
+
+        /// <summary>
+        /// 处理状态
+        /// </summary>
+        internal enum PROCESS_STATUS
+        {
+            /// <summary>
+            /// 无
+            /// </summary>
+            NONE,
+
+            /// <summary>
+            /// 序列化
+            /// </summary>
+            SERIALIZE,
+
+            /// <summary>
+            /// 反序列化
+            /// </summary>
+            DESERIALIZE,
         }
     }
 }
