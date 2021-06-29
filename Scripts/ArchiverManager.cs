@@ -87,126 +87,134 @@ namespace EFAS.Archiver
         /// <param name="_path">读档路径</param>
         public static async UniTask LoadArchiver(IArchiver _archiver, string _path)
         {
-            if (File.Exists(_path))
+            if (!File.Exists(_path))
             {
-                s_processStatus = PROCESS_STATUS.DESERIALIZE;
-                var propertyName = string.Empty;
-                // 升级后的版本号
-                Version upgradeVersion = null;
-                // 读取文件json
-                var json   = File.ReadAllText(_path);
-                var reader = new JsonTextReader(new StringReader(json));
+                throw new Exception($"保存路径不存在\n\"{_path}\"");
+            }
 
-                // 读取所有json内容
-                while (reader.Read())
+            s_processStatus = PROCESS_STATUS.DESERIALIZE;
+            var propertyName = string.Empty;
+            // 升级后的版本号
+            Version upgradeVersion = null;
+            // 读取文件json
+            var json   = File.ReadAllText(_path);
+            var reader = new JsonTextReader(new StringReader(json));
+
+            // 读取所有json内容
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
                 {
-                    switch (reader.TokenType)
-                    {
-                        case JsonToken.PropertyName:
-                            propertyName = (string) reader.Value;
+                    case JsonToken.PropertyName:
+                        propertyName = (string) reader.Value;
 
-                            // 版本号
-                            if (propertyName == nameof(IArchiver.Version))
+                        // 版本号
+                        if (propertyName == nameof(IArchiver.Version))
+                        {
+                            // 设置版本号string
+                            var versionString = reader.ReadAsString();
+
+                            if (!string.IsNullOrEmpty(versionString))
                             {
-                                // 设置版本号string
-                                var versionString = reader.ReadAsString();
-
-                                if (!string.IsNullOrEmpty(versionString))
-                                {
-                                    // 设置版本号
-                                    _archiver.Version = new Version(versionString);
-                                }
+                                // 设置版本号
+                                _archiver.Version = new Version(versionString);
                             }
+                        }
 
-                            break;
+                        break;
 
-                        case JsonToken.StartArray:
-                            // 读取Array第一个元素
-                            reader.Read();
+                    case JsonToken.StartArray:
+                        // 读取Array第一个元素
+                        reader.Read();
 
-                            while (reader.TokenType != JsonToken.EndArray)
-                            {
-                                /*
-                                 * 获取反序列化内容
-                                 */
-                                // TokenType: StartObject
-                                // 记录开始位置
-                                var startPosition = reader.LinePosition - 1;
-                                // 跳过Object内容
-                                reader.Skip();
-                                // TokenType: EndObject
-                                // 记录结束位置
-                                var endPosition = reader.LinePosition + 1;
-                                // 通过字段名称获取对应的类型
-                                if (string.IsNullOrEmpty(propertyName)) throw new Exception($"属性名称不能为空");
-                                var deserializeObjectType = _archiver.ArchiverDataTypeMap[propertyName];
-                                // 获取json对应的实体
-                                var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
-                                await CheckWaitBatch();
+                        while (reader.TokenType != JsonToken.EndArray)
+                        {
+                            /*
+                             * 获取反序列化内容
+                             */
+                            // TokenType: StartObject
+                            // 记录开始位置
+                            var startPosition = reader.LinePosition - 1;
+                            // 跳过Object内容
+                            reader.Skip();
+                            // TokenType: EndObject
+                            // 记录结束位置
+                            var endPosition = reader.LinePosition + 1;
+                            // 通过字段名称获取对应的类型
+                            if (string.IsNullOrEmpty(propertyName)) throw new Exception($"属性名称不能为空");
+                            var deserializeObjectType = _archiver.ArchiverDataTypeMap[propertyName];
+                            // 获取json对应的实体
+                            var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
+                            await CheckWaitBatch();
 
-                                /*
-                                 * 存档升级
-                                 */
+                            /*
+                             * 存档升级
+                             */
 #if UNITY_EDITOR
-                                deserializeObjectType.CheckUpgradeValid();
+                            deserializeObjectType.CheckUpgradeValid();
 #endif
-                                // 升级存档
-                                foreach (var archiverUpgradeAttribute in deserializeObjectType.GetCustomAttributes<ArchiverUpgradeAttribute>())
+                            // 升级存档
+                            foreach (var archiverUpgradeAttribute in deserializeObjectType.GetCustomAttributes<ArchiverUpgradeAttribute>())
+                            {
+                                var version = Version.Parse(archiverUpgradeAttribute.Version);
+
+                                // 判断存档版本是否升级代码
+                                if (_archiver.Version < version)
                                 {
-                                    var version = Version.Parse(archiverUpgradeAttribute.Version);
+                                    // 获取升级方法
+                                    var upgradeMethod = deserializeObjectType.GetMethod(archiverUpgradeAttribute.UpgradeFunctionName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
-                                    // 判断存档版本是否升级代码
-                                    if (_archiver.Version < version)
+                                    // 调用升级函数
+                                    deserializeObject = upgradeMethod.Invoke(null,
+                                                                             new[]
+                                                                             {
+                                                                                 deserializeObject
+                                                                             });
+
+                                    // 升级版本号
+                                    if (upgradeVersion == null || upgradeVersion < version)
                                     {
-                                        // 获取升级方法
-                                        var upgradeMethod = deserializeObjectType.GetMethod(archiverUpgradeAttribute.UpgradeFunctionName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+                                        upgradeVersion = new Version(version.ToString());
+                                    }
 
-                                        // 调用升级函数
-                                        deserializeObject = upgradeMethod.Invoke(null,
-                                                                                 new[]
-                                                                                 {
-                                                                                     deserializeObject
-                                                                                 });
-
-                                        // 升级版本号
-                                        if (upgradeVersion == null || upgradeVersion < version)
-                                        {
-                                            upgradeVersion = new Version(version.ToString());
-                                        }
-
-                                        if (deserializeObject == null)
-                                        {
-                                            throw new Exception($"\"{deserializeObjectType.FullName}.{archiverUpgradeAttribute.UpgradeFunctionName}\"返回值为null.");
-                                        }
+                                    if (deserializeObject == null)
+                                    {
+                                        throw new Exception($"\"{deserializeObjectType.FullName}.{archiverUpgradeAttribute.UpgradeFunctionName}\"返回值为null.");
                                     }
                                 }
-
-                                // 保存实体
-                                _archiver.Add(deserializeObject);
-                                // 读取下一个
-                                reader.Read();
                             }
 
-                            break;
-                    }
-                }
+                            // 保存实体
+                            _archiver.Add(deserializeObject);
+                            // 读取下一个
+                            reader.Read();
+                        }
 
-                if (upgradeVersion != null)
-                {
-                    _archiver.Version = upgradeVersion;
+                        break;
                 }
-
-                s_processStatus = PROCESS_STATUS.NONE;
             }
+
+            if (upgradeVersion != null)
+            {
+                _archiver.Version = upgradeVersion;
+            }
+
+            s_processStatus = PROCESS_STATUS.NONE;
         }
 
         /// <summary>
-        /// 手机存档类数据为Json, 并保存到指定路径中
+        /// 收集存档类数据为Json, 并保存到指定路径中
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_savePath">存档路径</param>
         private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
         {
+            var fileInfo = new FileInfo(_savePath);
+            if (fileInfo == null || fileInfo.Directory == null || !fileInfo.Directory.Exists)
+            {
+                throw new Exception($"保存路径不存在\n\"{_savePath}\"");
+            }
+
             s_processStatus = PROCESS_STATUS.SERIALIZE;
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {

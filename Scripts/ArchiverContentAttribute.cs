@@ -30,7 +30,7 @@ namespace EFAS.Archiver
         public ArchiverContentAttribute(Type _archiverType, string _groupName)
         {
             ArchiverType = _archiverType;
-            GroupName        = _groupName;
+            GroupName    = _groupName;
         }
     }
 }
