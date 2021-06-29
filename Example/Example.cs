@@ -104,6 +104,7 @@ namespace EFAS.Archiver.Example
 
             async UniTaskVoid _Load()
             {
+                m_exampleArchiver.Clear();
                 // 从指定位置读取存档
                 await ArchiverManager.LoadArchiver(m_exampleArchiver, m_archiverPath);
                 Debug.Log("Load Complete");

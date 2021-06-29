@@ -23,6 +23,16 @@ namespace EFAS.Archiver
         public Type Type;
 
         /// <summary>
+        /// 命名空间
+        /// </summary>
+        public string Namespace;
+
+        /// <summary>
+        /// 类名
+        /// </summary>
+        public string ClassName;
+
+        /// <summary>
         /// 存档元素集合
         /// </summary>
         public List<ArchiverContentData> ArchiverContentSet;

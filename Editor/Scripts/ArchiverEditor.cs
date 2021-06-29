@@ -24,7 +24,7 @@ namespace EFAS.Archiver
             foreach (var archiverData in archiverDataMap.Values)
             {
                 // 脚本内容
-                var scriptContent = new ScriptContent(archiverData.GenerateFoldPath, archiverData.Type);
+                var scriptContent = new ScriptContent(archiverData.GenerateFoldPath, archiverData.Type, archiverData.Namespace, archiverData.ClassName);
 
                 foreach (var archiverContentData in archiverData.ArchiverContentSet)
                 {
@@ -32,6 +32,7 @@ namespace EFAS.Archiver
                     scriptContent.AppendArchiverDataSet(archiverContentData);
                     scriptContent.AppendAddArchiverData(archiverContentData);
                     scriptContent.AppendRemoveArchiverData(archiverContentData);
+                    scriptContent.AppendClearArchiverData(archiverContentData);
                 }
 
                 scriptContent.CompleteScript();
@@ -56,11 +57,14 @@ namespace EFAS.Archiver
 
                     if (!_archiverDataSet.ContainsKey(type))
                     {
+                        var @namespace = string.IsNullOrEmpty(archiverAttribute.Namespace) ? type.Namespace : archiverAttribute.Namespace;
                         _archiverDataSet.Add(type,
                             new ArchiverData()
                             {
                                 GenerateFoldPath   = archiverAttribute.GenerateFoldPath,
                                 Type               = type,
+                                Namespace          = @namespace,
+                                ClassName          = type.Name,
                                 ArchiverContentSet = new List<ArchiverContentData>(),
                             });
                     }
