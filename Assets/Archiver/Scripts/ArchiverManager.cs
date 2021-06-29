@@ -92,7 +92,7 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_path}\"");
             }
 
-            ProcessStatus = PROCESS_STATUS.DESERIALIZE;
+            ProcessStatus = PROCESS_STATUS.LOADING;
             var propertyName = string.Empty;
             // 升级后的版本号
             Version upgradeVersion = null;
@@ -215,7 +215,7 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_savePath}\"");
             }
 
-            ProcessStatus = PROCESS_STATUS.SERIALIZE;
+            ProcessStatus = PROCESS_STATUS.SAVING;
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {
                 // 开始写入json
@@ -274,14 +274,14 @@ namespace EFAS.Archiver
             NONE,
 
             /// <summary>
-            /// 序列化
+            /// 保存中
             /// </summary>
-            SERIALIZE,
+            SAVING,
 
             /// <summary>
-            /// 反序列化
+            /// 加载中
             /// </summary>
-            DESERIALIZE,
+            LOADING,
         }
     }
 }
