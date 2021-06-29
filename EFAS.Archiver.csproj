@@ -54,7 +54,6 @@
   <ItemGroup>
      <Compile Include="Assets\Archiver\Scripts\Utils.cs" />
      <Compile Include="Assets\Archiver\Example\ExampleArchiver.cs" />
-     <Compile Include="Assets\Archiver\Scripts\ArchiverElementFilterAttribute.cs" />
      <Compile Include="Assets\Archiver\Scripts\IArchiver.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverElementFilterConvert.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverAttribute.cs" />

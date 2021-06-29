@@ -8,7 +8,6 @@ namespace EFAS.Archiver.Example
     /// 玩家数据
     /// </summary>
     [ArchiverContent(typeof(ExampleArchiver), "Player")]
-    [ArchiverElementFilter]
     public class Player
     {
         /// <summary>
@@ -18,8 +17,33 @@ namespace EFAS.Archiver.Example
         public int Hp;
 
         /// <summary>
+        /// 保存Class/Struct时, 如果Class/Struct内包含[ArchiverElement]标签才会执行过滤, 不然会保存整个类型数据
+        /// 参考<see cref="Atk"/>
+        /// </summary>
+        [ArchiverElement]
+        public Mp Mp;
+
+        [ArchiverElement]
+        public Atk Atk;
+
+        /// <summary>
         /// 不需要保存的数据添加不添加[ArchiverElement]
         /// </summary>
         public bool IsDied;
+    }
+
+    public struct Mp
+    {
+        public int Value;
+
+        public bool AutoRecovery;
+    }
+
+    public struct Atk
+    {
+        [ArchiverElement]
+        public int Value;
+
+        public bool OnePunch;
     }
 }

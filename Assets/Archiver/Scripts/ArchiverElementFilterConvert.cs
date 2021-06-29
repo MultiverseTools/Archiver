@@ -4,6 +4,7 @@
 
 using System;
 using System.Reflection;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -54,8 +55,20 @@ namespace EFAS.Archiver
 
         public override bool CanConvert(Type _objectType)
         {
-            // 标记了ArchiverElementFilterAttribute && 正在处理序列化阶段
-            return _objectType.IsDefined(typeof(ArchiverElementFilterAttribute), true) && ArchiverManager.s_processStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;   
+            // 正在处理序列化阶段
+            var isCanConvert = ArchiverManager.s_processStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;
+            if (isCanConvert)
+            {
+                // TODO 优化使用字段保存类型, 不用每次都判断
+                // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
+                isCanConvert = false;
+                foreach (var fieldInfo in _objectType.GetFields())
+                {
+                    isCanConvert = fieldInfo.IsDefined(typeof(ArchiverElementAttribute));
+                    if (isCanConvert) break;
+                }
+            }
+            return isCanConvert;
         }
     }
 }

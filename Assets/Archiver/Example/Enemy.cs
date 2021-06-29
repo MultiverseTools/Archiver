@@ -10,7 +10,6 @@ namespace EFAS.Archiver.Example
     /// 敌人数据
     /// </summary>
     [ArchiverContent(typeof(ExampleArchiver), "Enemies")]
-    [ArchiverElementFilter]
     // 升级Atk为Atk类型
     [ArchiverUpgrade("0.0.0.1", nameof(Upgrade0001))]
     // 可以添加多个升级Attribute, 注意: 版本号必须从小到大排列
@@ -66,10 +65,9 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 升级后的数据类型
     /// </summary>
-    [ArchiverElementFilter]
     public struct AtkInfo
     {
-        [ArchiverElement] public List<int> AtkSet;
+        public List<int> AtkSet;
 
         public bool OnePunchKill;
     }
