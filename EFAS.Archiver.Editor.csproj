@@ -59,7 +59,7 @@
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
-     <None Include="Assets\Archiver\Editor\Resources\Template\ClassTemplate.txt" />
+     <None Include="Assets\Archiver\Editor\Resources\Archiver\Template\ClassTemplate.txt" />
      <None Include="Assets\Archiver\Editor\EFAS.Archiver.Editor.asmdef" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>

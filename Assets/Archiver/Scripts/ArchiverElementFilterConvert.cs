@@ -10,9 +10,9 @@ using UnityEngine;
 namespace EFAS.Archiver
 {
     /// <summary>
-    /// 存档内容转换
+    /// 存档内容过滤转换
     /// </summary>
-    public class ArchiverContentConvert : JsonConverter
+    public class ArchiverElementFilterConvert : JsonConverter
     {
         public override void WriteJson(JsonWriter _writer, object? _value, JsonSerializer _serializer)
         {
@@ -52,6 +52,10 @@ namespace EFAS.Archiver
             throw new NotImplementedException();
         }
 
-        public override bool CanConvert(Type _objectType) => _objectType.IsDefined(typeof(ArchiverContentAttribute), false) && ArchiverManager.s_processStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;
+        public override bool CanConvert(Type _objectType)
+        {
+            // 标记了ArchiverElementFilterAttribute && 正在处理序列化阶段
+            return _objectType.IsDefined(typeof(ArchiverElementFilterAttribute), true) && ArchiverManager.s_processStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;   
+        }
     }
 }

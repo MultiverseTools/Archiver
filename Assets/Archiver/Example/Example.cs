@@ -4,6 +4,7 @@
 
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace EFAS.Archiver.Example
 {
@@ -21,7 +22,7 @@ namespace EFAS.Archiver.Example
             m_archiverPath        = $"{Application.dataPath}/Archiver/Example/Archiver.json";
             m_upgradeArchiverPath = $"{Application.dataPath}/Archiver/Example/UpgradeArchiver.json";
         }
-
+        
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.P))

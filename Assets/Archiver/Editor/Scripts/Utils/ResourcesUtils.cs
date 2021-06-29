@@ -11,7 +11,7 @@ namespace EFAS.Archiver
     /// </summary>
     public static class ResourcesUtils
     {
-        public static string TemplateContent(string _fileName) => Resources.Load<TextAsset>($"Template/{_fileName}").text;
+        public static string TemplateContent(string _fileName) => Resources.Load<TextAsset>($"Archiver/Template/{_fileName}").text;
         
         /// <summary>
         /// 获取脚本模版

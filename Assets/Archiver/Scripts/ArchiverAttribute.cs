@@ -17,6 +17,12 @@ namespace EFAS.Archiver
         /// </summary>
         public readonly string GenerateFoldPath;
 
+        /// <summary>
+        /// 命名空间
+        /// 不填: 使用添加处的命名空间
+        /// </summary>
+        public string Namespace;
+
         public ArchiverAttribute(string _generateFoldPath)
         {
             GenerateFoldPath = _generateFoldPath;
