@@ -3,12 +3,12 @@
 using System;
 using System.Collections.Generic;
 
-namespace EFAS.Archiver
+namespace EFAS.Archiver.Example
 {
     /// <summary>
     /// 存档内容
     /// </summary>
-    [Archiver("Assets/Archiver/Example")]
+    [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")]
     public class ExampleArchiver : IArchiver
     {
         /// <summary>
@@ -63,6 +63,15 @@ namespace EFAS.Archiver
 					Player.Remove(player);
 					break;
             }
+        }
+        
+        /// <summary>
+        /// 清空存档内容
+        /// </summary>
+        public void Clear()
+        {
+			Enemies.Clear();
+			Player.Clear();   
         }
     }
 }

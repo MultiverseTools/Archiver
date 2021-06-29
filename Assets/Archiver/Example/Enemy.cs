@@ -14,22 +14,29 @@ namespace EFAS.Archiver.Example
     // 升级Atk为Atk类型
     [ArchiverUpgrade("0.0.0.1", nameof(Upgrade0001))]
     // 可以添加多个升级Attribute, 注意: 版本号必须从小到大排列
-    // [ArchiverUpgrade("0.0.0.2", nameof(Upgrade0002))]
     public class Enemy
     {
+        /*
+         * 升级操作
+         * 1) 在Class/Struct上添加[ArchiverUpgrade]标签
+         * 2) 指定版本号(注意: 版本号必须从小到大排列)
+         * 3) 指定升级方法(注意: 返回值不能为null)
+         * 4) 移除过期数据上[ArchiverElement]标签, 为新数据添加[ArchiverElement]标签
+         */
+
         /// <summary>
         /// 升级前的数据
         ///
         /// 数据只能升级不能删除
         /// </summary>
-        // [ArchiverElement]
+        [ArchiverElement]
         public int Atk;
 
         /// <summary>
         /// 升级后的数据
         /// 0.0.0.1升级数据
         /// </summary>
-        [ArchiverElement] 
+        // [ArchiverElement] 
         public AtkInfo AtkInfo;
 
         /// <summary>
@@ -62,8 +69,7 @@ namespace EFAS.Archiver.Example
     [ArchiverElementFilter]
     public struct AtkInfo
     {
-        [ArchiverElement] 
-        public List<int> AtkSet;
+        [ArchiverElement] public List<int> AtkSet;
 
         public bool OnePunchKill;
     }

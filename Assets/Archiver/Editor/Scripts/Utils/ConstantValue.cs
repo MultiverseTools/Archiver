@@ -15,6 +15,11 @@ namespace EFAS.Archiver
         public const string k_generateFolderPath = "#GENERATE_FOLDER_PATH#";
 
         /// <summary>
+        /// 命名空间
+        /// </summary>
+        public const string k_namespace = "#NAMESPACE#";
+
+        /// <summary>
         /// 类名
         /// </summary>
         public const string k_className = "#CLASS_NAME#";
@@ -38,5 +43,10 @@ namespace EFAS.Archiver
         /// 移除存档数据
         /// </summary>
         public const string k_archiverDataRemove = "#ARCHIVER_DATA_REMOVE#";
+
+        /// <summary>
+        /// 清空存档数据
+        /// </summary>
+        public const string k_archiverDataClear = "#ARCHIVER_DATA_CLEAR#";
     }
 }
