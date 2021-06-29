@@ -56,7 +56,7 @@ namespace EFAS.Archiver
         public override bool CanConvert(Type _objectType)
         {
             // 正在处理序列化阶段
-            var isCanConvert = ArchiverManager.s_processStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;
+            var isCanConvert = ArchiverManager.ProcessStatus == ArchiverManager.PROCESS_STATUS.SERIALIZE;
             if (isCanConvert)
             {
                 // TODO 优化使用字段保存类型, 不用每次都判断

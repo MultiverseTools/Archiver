@@ -19,7 +19,7 @@ namespace EFAS.Archiver
         /// <summary>
         /// 处理状态
         /// </summary>
-        internal static PROCESS_STATUS s_processStatus;
+        public static PROCESS_STATUS ProcessStatus { get; private set; }
 
         /// <summary>
         /// 每次处理的保存数据的数量
@@ -92,7 +92,7 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_path}\"");
             }
 
-            s_processStatus = PROCESS_STATUS.DESERIALIZE;
+            ProcessStatus = PROCESS_STATUS.DESERIALIZE;
             var propertyName = string.Empty;
             // 升级后的版本号
             Version upgradeVersion = null;
@@ -199,7 +199,7 @@ namespace EFAS.Archiver
                 _archiver.Version = upgradeVersion;
             }
 
-            s_processStatus = PROCESS_STATUS.NONE;
+            ProcessStatus = PROCESS_STATUS.NONE;
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_savePath}\"");
             }
 
-            s_processStatus = PROCESS_STATUS.SERIALIZE;
+            ProcessStatus = PROCESS_STATUS.SERIALIZE;
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {
                 // 开始写入json
@@ -248,7 +248,7 @@ namespace EFAS.Archiver
                 jsonTextWriter.WriteEndObject();
             }
 
-            s_processStatus = PROCESS_STATUS.NONE;
+            ProcessStatus = PROCESS_STATUS.NONE;
         }
 
         /// <summary>
@@ -266,7 +266,7 @@ namespace EFAS.Archiver
         /// <summary>
         /// 处理状态
         /// </summary>
-        internal enum PROCESS_STATUS
+        public enum PROCESS_STATUS
         {
             /// <summary>
             /// 无
