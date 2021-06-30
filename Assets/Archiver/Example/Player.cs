@@ -2,6 +2,8 @@
 // Author:      Sora
 // CreateTime:  2021-06-25-17:12
 
+using Newtonsoft.Json;
+
 namespace EFAS.Archiver.Example
 {
     /// <summary>
@@ -42,7 +44,8 @@ namespace EFAS.Archiver.Example
     public struct Atk
     {
         [ArchiverElement]
-        public int Value;
+        // 不要使用: [field: ArchiverElement], backfield是private类型不能被保存
+        public int Value { get; set; }
 
         public bool OnePunch;
     }

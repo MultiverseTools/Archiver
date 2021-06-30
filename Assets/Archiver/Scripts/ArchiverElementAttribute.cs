@@ -9,7 +9,7 @@ namespace EFAS.Archiver
     /// <summary>
     /// 存档保存的元素
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class ArchiverElementAttribute : Attribute
     {
         
