@@ -62,9 +62,14 @@ namespace EFAS.Archiver
                 // TODO 优化使用字段保存类型, 不用每次都判断
                 // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
                 isCanConvert = false;
-                foreach (var fieldInfo in _objectType.GetFields())
+                foreach (var memberInfo in _objectType.GetMembers())
                 {
-                    isCanConvert = fieldInfo.IsDefined(typeof(ArchiverElementAttribute));
+                    // 判断属性/字段是否带ArchiverElementAttribute
+                    if (memberInfo.MemberType == MemberTypes.Field
+                    || memberInfo.MemberType == MemberTypes.Property)
+                    {
+                        isCanConvert = memberInfo.IsDefined(typeof(ArchiverElementAttribute));
+                    }
                     if (isCanConvert) break;
                 }
             }
