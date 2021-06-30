@@ -68,7 +68,7 @@ namespace EFAS.Archiver
                     if (memberInfo.MemberType == MemberTypes.Field
                     || memberInfo.MemberType == MemberTypes.Property)
                     {
-                        isCanConvert = memberInfo.IsDefined(typeof(ArchiverElementAttribute));
+                        isCanConvert = Attribute.IsDefined(memberInfo, typeof(ArchiverElementAttribute));
                     }
                     if (isCanConvert) break;
                 }
