@@ -8,7 +8,7 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 存档内容
     /// </summary>
-    [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")]
+    // [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")] // package中不能使用才注释
     public class ExampleArchiver : IArchiver
     {
         /// <summary>
