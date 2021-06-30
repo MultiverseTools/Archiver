@@ -56,6 +56,10 @@ namespace EFAS.Archiver.Example
             var player = new Player()
             {
                 Hp = Random.Range(0, 100000),
+                Atk = new Atk()
+                {
+                    Value = Random.Range(0, 10000),
+                }
             };
 
             // 添加存档目标
@@ -107,6 +111,7 @@ namespace EFAS.Archiver.Example
                 m_exampleArchiver.Clear();
                 // 从指定位置读取存档
                 await ArchiverManager.LoadArchiver(m_exampleArchiver, m_archiverPath);
+                Debug.Log(m_exampleArchiver.Player[0].Atk.Value);
                 Debug.Log("Load Complete");
                 // 保存存档到指定位置
                 await ArchiverManager.SaveArchiver(m_exampleArchiver, m_upgradeArchiverPath);

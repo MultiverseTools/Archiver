@@ -26,25 +26,37 @@ namespace EFAS.Archiver
             var valueType = _value.GetType();
             _writer.WriteStartObject();
 
-            foreach (var fieldInfo in valueType.GetFields(BindingFlags.Instance | BindingFlags.Public))
+            foreach (var memberInfo in valueType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
             {
                 // 过滤不设置ArchiverElementAttribute的字段
-                if (!fieldInfo.IsDefined(typeof(ArchiverElementAttribute), false)) continue;
-                // 保存字段
-                var fieldValue = fieldInfo.GetValue(_value);
-                _writer.WritePropertyName(fieldInfo.Name);
-                if (fieldValue == null)
+                if (!Attribute.IsDefined(memberInfo, typeof(ArchiverElementAttribute))) continue;
+                if (memberInfo is FieldInfo fieldInfo)
                 {
-                    _writer.WriteNull();
-                    Debug.LogError($"\"{valueType.FullName}.{fieldInfo.Name}\"保存null.");
+                    // 保存字段值
+                    _WriteValue(memberInfo.Name, fieldInfo.GetValue(_value));
                 }
-                else
+                else if (memberInfo is PropertyInfo propertyInfo)
                 {
-                    _writer.WriteRawValue(JsonConvert.SerializeObject(fieldValue, _serializer.Formatting));
+                    // 保存属性值
+                    _WriteValue(memberInfo.Name, propertyInfo.GetValue(_value));
                 }
             }
 
             _writer.WriteEndObject();
+
+            void _WriteValue(string _name, object _object)
+            {
+                _writer.WritePropertyName(_name);
+                if (_object == null)
+                {
+                    _writer.WriteNull();
+                    Debug.LogError($"\"{valueType.FullName}.{_name}\"保存null.");
+                }
+                else
+                {
+                    _writer.WriteRawValue(JsonConvert.SerializeObject(_object, _serializer.Formatting));
+                }
+            }
         }
 
         public override object? ReadJson(JsonReader _reader, Type _objectType, object? _existingValue, JsonSerializer _serializer)
@@ -62,7 +74,7 @@ namespace EFAS.Archiver
                 // TODO 优化使用字段保存类型, 不用每次都判断
                 // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
                 isCanConvert = false;
-                foreach (var memberInfo in _objectType.GetMembers())
+                foreach (var memberInfo in _objectType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
                 {
                     // 判断属性/字段是否带ArchiverElementAttribute
                     if (memberInfo.MemberType == MemberTypes.Field
