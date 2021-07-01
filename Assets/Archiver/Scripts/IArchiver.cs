@@ -33,5 +33,10 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_object">存档元素</param>
         void Remove(object _object);
+
+        /// <summary>
+        /// 移除所有元素
+        /// </summary>
+        void Clear();
     }
 }
