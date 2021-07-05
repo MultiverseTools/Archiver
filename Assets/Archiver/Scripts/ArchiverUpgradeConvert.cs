@@ -76,7 +76,6 @@ namespace EFAS.Archiver
             var isCanConvert = ArchiverManager.ProcessStatus == ArchiverManager.PROCESS_STATUS.LOADING;
             if (isCanConvert)
             {
-                // TODO 优化保存类型, 不用每次都判断
                 // Class/Struct中有带[ArchiverUpgradeAttribute]
                 isCanConvert = _objectType.IsDefined(typeof(ArchiverUpgradeAttribute), false);
             }

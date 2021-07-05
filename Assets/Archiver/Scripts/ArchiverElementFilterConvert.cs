@@ -3,6 +3,7 @@
 // CreateTime:  2021-06-28-10:46
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -14,6 +15,11 @@ namespace EFAS.Archiver
     /// </summary>
     public class ArchiverElementFilterConvert : JsonConverter
     {
+        /// <summary>
+        /// 类型中字段/属性是否有ArchiverElementAttribute
+        /// </summary>
+        private static readonly Dictionary<Type, bool> s_archiverElementMap = new Dictionary<Type, bool>();
+
         public override void WriteJson(JsonWriter _writer, object? _value, JsonSerializer _serializer)
         {
             if (_value == null)
@@ -70,18 +76,25 @@ namespace EFAS.Archiver
             var isCanConvert = ArchiverManager.ProcessStatus == ArchiverManager.PROCESS_STATUS.SAVING;
             if (isCanConvert)
             {
-                // TODO 优化保存类型, 不用每次都判断
-                // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
-                isCanConvert = false;
-                foreach (var memberInfo in _objectType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
+                if (s_archiverElementMap.TryGetValue(_objectType, out var canConvert))
                 {
-                    // 判断属性/字段是否带ArchiverElementAttribute
-                    if (memberInfo.MemberType == MemberTypes.Field
-                    || memberInfo.MemberType == MemberTypes.Property)
+                    isCanConvert = canConvert;
+                }
+                else
+                {
+                    // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
+                    isCanConvert = false;
+                    foreach (var memberInfo in _objectType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        isCanConvert = Attribute.IsDefined(memberInfo, typeof(ArchiverElementAttribute));
+                        // 判断属性/字段是否带ArchiverElementAttribute
+                        if (memberInfo.MemberType == MemberTypes.Field
+                        || memberInfo.MemberType == MemberTypes.Property)
+                        {
+                            isCanConvert = memberInfo.IsDefined(typeof(ArchiverElementAttribute));
+                        }
+                        if (isCanConvert) break;
                     }
-                    if (isCanConvert) break;
+                    s_archiverElementMap.Add(_objectType, isCanConvert);
                 }
             }
             return isCanConvert;
