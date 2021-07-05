@@ -52,13 +52,6 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ConstantValue.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\EditorUtils.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
-     <None Include="Assets\Archiver\Editor\Resources\Template\ClassTemplate.txt" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
@@ -298,6 +291,12 @@
  </Reference>
  <Reference Include="unityplastic">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collab-proxy@1.5.7/Lib/Editor/PlasticSCM/unityplastic.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Burst.Unsafe">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.burst@1.4.1/Unity.Burst.Unsafe.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Collections.LowLevel.ILSupport">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collections@0.15.0-preview.21/Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.dll</HintPath>
  </Reference>
  <Reference Include="nunit.framework">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.ext.nunit@1.0.6/net35/unity-custom/nunit.framework.dll</HintPath>
@@ -677,20 +676,105 @@
  <Reference Include="UnityEditor.UI">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
  </Reference>
- <Reference Include="Unity.PlasticSCM.Editor">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll</HintPath>
- </Reference>
  <Reference Include="Unity.Rider.Editor">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.PlasticSCM.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.PlasticSCM.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Properties.UI.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Properties.UI.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Scenes">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Scenes.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Mathematics.Extensions.Hybrid">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Mathematics.Extensions.Hybrid.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Entities.BuildUtils">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Entities.BuildUtils.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Properties.UI">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Properties.UI.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.ScriptableBuildPipeline">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Serialization">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Serialization.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Jobs">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Jobs.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Deformations">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Deformations.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Properties">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Properties.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.CacheServer">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.CacheServer.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Jobs.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Jobs.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Scenes.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Scenes.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Collections">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Collections.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Entities.Hybrid.EndToEnd.Tests">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Entities.Hybrid.EndToEnd.Tests.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Mathematics.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Mathematics.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Entities.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Entities.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Entities.Hybrid">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Entities.Hybrid.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Mathematics">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Mathematics.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Transforms.Hybrid">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Transforms.Hybrid.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Burst">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Burst.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Mathematics.Extensions">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Mathematics.Extensions.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Transforms">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Transforms.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Entities">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Entities.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Serialization.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Serialization.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Burst.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.Burst.Editor.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.ScriptableBuildPipeline.Editor">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/Unity.ScriptableBuildPipeline.Editor.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp.csproj">
       <Project>{76682dcb-db34-e1fc-b1a0-5521d73df0f5}</Project>
       <Name>Assembly-CSharp</Name>
+    </ProjectReference>
+    <ProjectReference Include="EFAS.Archiver.csproj">
+      <Project>{3895c74f-796c-d33a-8389-8bc4acbf0e79}</Project>
+      <Name>EFAS.Archiver</Name>
     </ProjectReference>
     <ProjectReference Include="UniTask.TextMeshPro.csproj">
       <Project>{7235176a-d2bc-2cb0-5311-a1e47208df9c}</Project>
@@ -699,6 +783,10 @@
     <ProjectReference Include="UniTask.DOTween.csproj">
       <Project>{031a1c46-970b-00a4-3f2c-d08d8a0ccf29}</Project>
       <Name>UniTask.DOTween</Name>
+    </ProjectReference>
+    <ProjectReference Include="EFAS.Archiver.Editor.csproj">
+      <Project>{5ed02ba7-1fd3-4a25-16ee-532fd8d4e5a3}</Project>
+      <Name>EFAS.Archiver.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="UniTask.csproj">
       <Project>{dd8a85ca-40eb-870d-4d90-9939d6668ef1}</Project>
@@ -716,6 +804,9 @@
       <Project>{9d079a33-c52a-28c8-ecc6-f23a2d7ec59e}</Project>
       <Name>UniTask.Linq</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

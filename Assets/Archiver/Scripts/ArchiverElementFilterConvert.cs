@@ -59,7 +59,7 @@ namespace EFAS.Archiver
                 }
                 else
                 {
-                    _writer.WriteRawValue(JsonConvert.SerializeObject(_object, _serializer.Formatting));
+                    _serializer.Serialize(_writer, _object);
                 }
             }
         }
