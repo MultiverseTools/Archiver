@@ -8,7 +8,7 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 存档内容
     /// </summary>
-    // [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")] // package中不能使用才注释
+    // [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")]
     public class ExampleArchiver : IArchiver
     {
         /// <summary>
@@ -16,8 +16,8 @@ namespace EFAS.Archiver.Example
         /// </summary>
         public Dictionary<string, Type> ArchiverDataTypeMap { get; } = new Dictionary<string, Type>()
         {
-			{"Enemies", typeof(EFAS.Archiver.Example.Enemy)},
-			{"Player", typeof(EFAS.Archiver.Example.Player)},
+            {"Enemies", typeof(EFAS.Archiver.Example.Enemy)},
+            {"Player", typeof(EFAS.Archiver.Example.Player)},
         };
 
         /// <summary>
@@ -26,9 +26,10 @@ namespace EFAS.Archiver.Example
         [Newtonsoft.Json.JsonProperty]
         public Version Version { get; set; } = new Version(0, 0, 0, 0);
 
-		public List<EFAS.Archiver.Example.Enemy> Enemies = new List<EFAS.Archiver.Example.Enemy>();
-		public List<EFAS.Archiver.Example.Player> Player = new List<EFAS.Archiver.Example.Player>();
-        
+        public List<EFAS.Archiver.Example.Enemy> Enemies = new List<EFAS.Archiver.Example.Enemy>();
+
+        public List<EFAS.Archiver.Example.Player> Player = new List<EFAS.Archiver.Example.Player>();
+
         /// <summary>
         /// 添加元素
         /// </summary>
@@ -37,13 +38,13 @@ namespace EFAS.Archiver.Example
         {
             switch (_object)
             {
-				case EFAS.Archiver.Example.Enemy enemy:
-					Enemies.Add(enemy);
-					break;
-				
-				case EFAS.Archiver.Example.Player player:
-					Player.Add(player);
-					break;
+                case EFAS.Archiver.Example.Enemy enemy:
+                    Enemies.Add(enemy);
+                    break;
+
+                case EFAS.Archiver.Example.Player player:
+                    Player.Add(player);
+                    break;
             }
         }
 
@@ -55,23 +56,23 @@ namespace EFAS.Archiver.Example
         {
             switch (_object)
             {
-				case EFAS.Archiver.Example.Enemy enemy:
-					Enemies.Remove(enemy);
-					break;
-				
-				case EFAS.Archiver.Example.Player player:
-					Player.Remove(player);
-					break;
+                case EFAS.Archiver.Example.Enemy enemy:
+                    Enemies.Remove(enemy);
+                    break;
+
+                case EFAS.Archiver.Example.Player player:
+                    Player.Remove(player);
+                    break;
             }
         }
-        
+
         /// <summary>
         /// 清空存档内容
         /// </summary>
         public void Clear()
         {
-			Enemies.Clear();
-			Player.Clear();   
+            Enemies.Clear();
+            Player.Clear();
         }
     }
 }

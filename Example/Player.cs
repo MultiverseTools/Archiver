@@ -2,14 +2,12 @@
 // Author:      Sora
 // CreateTime:  2021-06-25-17:12
 
-using Newtonsoft.Json;
-
 namespace EFAS.Archiver.Example
 {
     /// <summary>
     /// 玩家数据
     /// </summary>
-    // [ArchiverContent(typeof(ExampleArchiver), "Player")] // package中不能使用才注释
+    // [ArchiverContent(typeof(ExampleArchiver), "Player")]
     public class Player
     {
         /// <summary>
@@ -44,7 +42,7 @@ namespace EFAS.Archiver.Example
     public struct Atk
     {
         [ArchiverElement]
-        // 不要使用: [field: ArchiverElement], backfield是private类型不能被保存
+        // 注意: 不要使用[field: ArchiverElement], backfield是private类型不能被保存
         public int Value { get; set; }
 
         public bool OnePunch;
