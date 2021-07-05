@@ -23,6 +23,7 @@ namespace EFAS.Archiver
 
         /// <summary>
         /// 每次处理的保存数据的数量
+        /// TODO 可配置
         /// </summary>
         private const int k_batchCount = 10;
 
@@ -32,39 +33,60 @@ namespace EFAS.Archiver
         private static int s_batchIndex = 0;
 
         /// <summary>
+        /// 加载存档时版本号
+        /// 当前加载的存档的版本号
+        /// </summary>
+        internal static Version LoadingArchiverVersion;
+
+        /// <summary>
+        /// 加载存档时最高版本号
+        /// 加载存档完成后最高版本号
+        /// </summary>
+        internal static Version LoadingHighestVersion;
+
+        /// <summary>
         /// 保存指定存档
+        /// 注意: 同时只能保存一个存档
         /// </summary>
         /// <param name="_archiver">存档</param>
-        /// <param name="_path">存档路径</param>
+        /// <param name="_savePath">存档路径</param>
         /// <param name="_completeAction">存档完成时回调</param>
-        public static void SaveArchiver(IArchiver _archiver, string _path, Action _completeAction)
+        public static void SaveArchiver(IArchiver _archiver, string _savePath, Action _completeAction)
         {
             _SaveArchiver().Forget();
 
             async UniTaskVoid _SaveArchiver()
             {
-                await SaveArchiver(_archiver, _path);
+                await SaveArchiver(_archiver, _savePath);
                 _completeAction?.Invoke();
             }
         }
 
         /// <summary>
         /// 保存指定存档
+        /// 注意: 同时只能保存一个存档
         /// </summary>
         /// <param name="_archiver">存档</param>
-        /// <param name="_path">存档路径</param>
-        public static UniTask SaveArchiver(IArchiver _archiver, string _path)
+        /// <param name="_savePath">存档路径</param>
+        public static async UniTask SaveArchiver(IArchiver _archiver, string _savePath)
         {
-            if (File.Exists(_path))
+            if (File.Exists(_savePath))
             {
-                File.Delete(_path);
+                File.Delete(_savePath);
             }
-
-            return CollectionData(_archiver, _path);
+            var fileInfo = new FileInfo(_savePath);
+            if (fileInfo == null || fileInfo.Directory == null || !fileInfo.Directory.Exists)
+            {
+                throw new Exception($"保存路径不存在\n\"{_savePath}\"");
+            }
+            ProcessStatus  = PROCESS_STATUS.SAVING;
+            await CollectionData(_archiver, _savePath);
+            ProcessStatus  = PROCESS_STATUS.NONE;
         }
 
         /// <summary>
         /// 读取存档并且升级存档
+        /// 注意: 同时只能读取一个存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
@@ -82,6 +104,7 @@ namespace EFAS.Archiver
 
         /// <summary>
         /// 读取存档并且升级存档
+        /// 注意: 同时只能读取一个存档
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_path">读档路径</param>
@@ -92,10 +115,66 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_path}\"");
             }
 
-            ProcessStatus = PROCESS_STATUS.LOADING;
+            ProcessStatus          = PROCESS_STATUS.LOADING;
+            LoadingArchiverVersion = new Version(_archiver.Version.ToString());
+            LoadingHighestVersion  = new Version(_archiver.Version.ToString());
+            await InternalLoadArchiver(_archiver, _path);
+            ProcessStatus = PROCESS_STATUS.NONE;
+            // 设置升级后最高版本号
+            _archiver.Version      = LoadingHighestVersion;
+            LoadingArchiverVersion = null;
+            LoadingHighestVersion  = null;
+        }
+
+        /// <summary>
+        /// 收集存档类数据为Json, 并保存到指定路径中
+        /// </summary>
+        /// <param name="_archiver">存档</param>
+        /// <param name="_savePath">存档路径</param>
+        private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
+        {
+            using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
+            {
+                // 开始写入json
+                jsonTextWriter.WriteStartObject();
+                // 保存版本号
+                jsonTextWriter.WritePropertyName(nameof(IArchiver.Version));
+                var version = _archiver.GetType().GetProperty(nameof(IArchiver.Version)).GetValue(_archiver);
+                jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(version, Formatting.None));
+
+                // 遍历写入所有字段
+                foreach (var fieldInfo in _archiver.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    jsonTextWriter.WritePropertyName(fieldInfo.Name);
+                    var fieldValue = fieldInfo.GetValue(_archiver);
+
+                    jsonTextWriter.WriteStartArray();
+                    var iterator = (IEnumerable) fieldValue;
+
+                    foreach (var item in iterator)
+                    {
+                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None));
+
+                        // 同时处理量不能过大
+                        await CheckWaitBatch();
+                    }
+
+                    jsonTextWriter.WriteEndArray();
+                }
+
+                jsonTextWriter.WriteEndObject();
+            }
+        }
+
+        /// <summary>
+        /// 读取存档并且升级存档
+        /// 注意: 同时只能读取一个存档
+        /// </summary>
+        /// <param name="_archiver">存档</param>
+        /// <param name="_path">读档路径</param>
+        private static async UniTask InternalLoadArchiver(IArchiver _archiver, string _path)
+        {
             var propertyName = string.Empty;
-            // 升级后的版本号
-            Version upgradeVersion = null;
             // 读取文件json
             var json   = File.ReadAllText(_path);
             var reader = new JsonTextReader(new StringReader(json));
@@ -146,44 +225,6 @@ namespace EFAS.Archiver
                             // 获取json对应的实体
                             var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
                             await CheckWaitBatch();
-
-                            /*
-                             * 存档升级
-                             */
-#if UNITY_EDITOR
-                            deserializeObjectType.CheckUpgradeValid();
-#endif
-                            // 升级存档
-                            foreach (var archiverUpgradeAttribute in deserializeObjectType.GetCustomAttributes<ArchiverUpgradeAttribute>())
-                            {
-                                var version = Version.Parse(archiverUpgradeAttribute.Version);
-
-                                // 判断存档版本是否升级代码
-                                if (_archiver.Version < version)
-                                {
-                                    // 获取升级方法
-                                    var upgradeMethod = deserializeObjectType.GetMethod(archiverUpgradeAttribute.UpgradeFunctionName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-
-                                    // 调用升级函数
-                                    deserializeObject = upgradeMethod.Invoke(null,
-                                                                             new[]
-                                                                             {
-                                                                                 deserializeObject
-                                                                             });
-
-                                    // 升级版本号
-                                    if (upgradeVersion == null || upgradeVersion < version)
-                                    {
-                                        upgradeVersion = new Version(version.ToString());
-                                    }
-
-                                    if (deserializeObject == null)
-                                    {
-                                        throw new Exception($"\"{deserializeObjectType.FullName}.{archiverUpgradeAttribute.UpgradeFunctionName}\"返回值为null.");
-                                    }
-                                }
-                            }
-
                             // 保存实体
                             _archiver.Add(deserializeObject);
                             // 读取下一个
@@ -193,62 +234,6 @@ namespace EFAS.Archiver
                         break;
                 }
             }
-
-            if (upgradeVersion != null)
-            {
-                _archiver.Version = upgradeVersion;
-            }
-
-            ProcessStatus = PROCESS_STATUS.NONE;
-        }
-
-        /// <summary>
-        /// 收集存档类数据为Json, 并保存到指定路径中
-        /// </summary>
-        /// <param name="_archiver">存档</param>
-        /// <param name="_savePath">存档路径</param>
-        private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
-        {
-            var fileInfo = new FileInfo(_savePath);
-            if (fileInfo == null || fileInfo.Directory == null || !fileInfo.Directory.Exists)
-            {
-                throw new Exception($"保存路径不存在\n\"{_savePath}\"");
-            }
-
-            ProcessStatus = PROCESS_STATUS.SAVING;
-            using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
-            {
-                // 开始写入json
-                jsonTextWriter.WriteStartObject();
-                // 保存版本号
-                jsonTextWriter.WritePropertyName(nameof(IArchiver.Version));
-                var version = _archiver.GetType().GetProperty(nameof(IArchiver.Version)).GetValue(_archiver);
-                jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(version, Formatting.None));
-
-                // 遍历写入所有字段
-                foreach (var fieldInfo in _archiver.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public))
-                {
-                    jsonTextWriter.WritePropertyName(fieldInfo.Name);
-                    var fieldValue = fieldInfo.GetValue(_archiver);
-
-                    jsonTextWriter.WriteStartArray();
-                    var iterator = (IEnumerable) fieldValue;
-
-                    foreach (var item in iterator)
-                    {
-                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None));
-
-                        // 同时处理量不能过大
-                        await CheckWaitBatch();
-                    }
-
-                    jsonTextWriter.WriteEndArray();
-                }
-
-                jsonTextWriter.WriteEndObject();
-            }
-
-            ProcessStatus = PROCESS_STATUS.NONE;
         }
 
         /// <summary>

@@ -1,1 +1,1 @@
-{"Version":"0.0.0.0","Enemies":[],"Player":[{"Hp":67900,"Mp":{"Value":0,"AutoRecovery":false},"Atk":{"Value":34}}]}
+{"Version":"0.0.0.0","Enemies":[{"Atk":33385,"AtkInfo":{"AtkSet":null,"OnePunchKill":false}}],"Player":[{"Hp":74727,"Mp":{"Value":0,"AutoRecovery":false},"Atk":{"Value":8903}}]}

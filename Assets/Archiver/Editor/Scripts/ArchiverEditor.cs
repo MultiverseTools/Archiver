@@ -48,6 +48,9 @@ namespace EFAS.Archiver
         /// <param name="_archiverDataSet"></param>
         private static void CollectionArchiverData(Dictionary<Type, ArchiverData> _archiverDataSet)
         {
+            /*
+             * 设置存档
+             */
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
@@ -70,16 +73,15 @@ namespace EFAS.Archiver
                     }
                 }
             }
-
+            /*
+             * 设置存档内容
+             */
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
                 {
                     var archiverAttribute = type.GetCustomAttribute<ArchiverContentAttribute>();
                     if (archiverAttribute == null) continue;
-                    // 检测存档升级能否使用
-                    type.CheckUpgradeValid();
-
                     if (!_archiverDataSet.TryGetValue(archiverAttribute.ArchiverType, out var archiverData))
                     {
                         throw new Exception($"\"{archiverAttribute.ArchiverType.Name}\"未添加\"[{nameof(ArchiverAttribute)}]\".");
@@ -90,6 +92,20 @@ namespace EFAS.Archiver
                         GroupName = archiverAttribute.GroupName,
                         Type      = type,
                     });
+                }
+            }
+            
+            /*
+             * 检测升级代码正确
+             */
+            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsDefined(typeof(ArchiverUpgradeAttribute), false))
+                    {
+                        type.CheckUpgradeValid();
+                    }
                 }
             }
         }

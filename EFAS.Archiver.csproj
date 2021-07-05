@@ -57,6 +57,7 @@
      <Compile Include="Assets\Archiver\Scripts\IArchiver.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverElementFilterConvert.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverAttribute.cs" />
+     <Compile Include="Assets\Archiver\Scripts\ArchiverUpgradeConvert.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverManager.cs" />
      <Compile Include="Assets\Archiver\Example\Player.cs" />
      <Compile Include="Assets\Archiver\Scripts\ArchiverUpgradeAttribute.cs" />

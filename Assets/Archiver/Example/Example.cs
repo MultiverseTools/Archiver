@@ -34,7 +34,7 @@ namespace EFAS.Archiver.Example
             {
                 AddEnemy();
             }
-
+            
             if (Input.GetKeyDown(KeyCode.S))
             {
                 Save();
@@ -46,14 +46,14 @@ namespace EFAS.Archiver.Example
             }
         }
 
+        private Player m_player; 
+
         /// <summary>
         /// 添加一个玩家
         /// </summary>
         private void AddPlayer()
         {
-            Debug.Log("AddPlayer");
-
-            var player = new Player()
+            m_player = new Player()
             {
                 Hp = Random.Range(0, 100000),
                 Atk = new Atk()
@@ -62,8 +62,9 @@ namespace EFAS.Archiver.Example
                 }
             };
 
+            Debug.Log($"AddPlayer: {m_player.Atk.Value}");
             // 添加存档目标
-            m_exampleArchiver.Add(player);
+            m_exampleArchiver.Add(m_player);
         }
 
         /// <summary>
@@ -111,7 +112,6 @@ namespace EFAS.Archiver.Example
                 m_exampleArchiver.Clear();
                 // 从指定位置读取存档
                 await ArchiverManager.LoadArchiver(m_exampleArchiver, m_archiverPath);
-                Debug.Log(m_exampleArchiver.Player[0].Atk.Value);
                 Debug.Log("Load Complete");
                 // 保存存档到指定位置
                 await ArchiverManager.SaveArchiver(m_exampleArchiver, m_upgradeArchiverPath);

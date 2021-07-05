@@ -4,7 +4,6 @@
 
 using System;
 using System.Reflection;
-using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -71,7 +70,7 @@ namespace EFAS.Archiver
             var isCanConvert = ArchiverManager.ProcessStatus == ArchiverManager.PROCESS_STATUS.SAVING;
             if (isCanConvert)
             {
-                // TODO 优化使用字段保存类型, 不用每次都判断
+                // TODO 优化保存类型, 不用每次都判断
                 // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
                 isCanConvert = false;
                 foreach (var memberInfo in _objectType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
