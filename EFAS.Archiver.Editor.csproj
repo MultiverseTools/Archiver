@@ -56,9 +56,9 @@
      <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverContentData.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ConstantValue.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\EditorUtils.cs" />
+     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
      <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
      <None Include="Assets\Archiver\Editor\Resources\Archiver\Template\ClassTemplate.txt" />
      <None Include="Assets\Archiver\Editor\EFAS.Archiver.Editor.asmdef" />
  <Reference Include="UnityEngine">
@@ -289,8 +289,14 @@
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="Unity.Collections.LowLevel.ILSupport">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collections@0.15.0-preview.21/Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.dll</HintPath>
+ </Reference>
  <Reference Include="Unity.Plastic.Antlr3.Runtime">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collab-proxy@1.5.7/Lib/Editor/PlasticSCM/Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+ </Reference>
+ <Reference Include="Unity.Burst.Unsafe">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.burst@1.4.1/Unity.Burst.Unsafe.dll</HintPath>
  </Reference>
  <Reference Include="log4netPlastic">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collab-proxy@1.5.7/Lib/Editor/PlasticSCM/log4netPlastic.dll</HintPath>
@@ -300,12 +306,6 @@
  </Reference>
  <Reference Include="unityplastic">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collab-proxy@1.5.7/Lib/Editor/PlasticSCM/unityplastic.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Burst.Unsafe">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.burst@1.4.1/Unity.Burst.Unsafe.dll</HintPath>
- </Reference>
- <Reference Include="Unity.Collections.LowLevel.ILSupport">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.collections@0.15.0-preview.21/Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.dll</HintPath>
  </Reference>
  <Reference Include="nunit.framework">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/PackageCache/com.unity.ext.nunit@1.0.6/net35/unity-custom/nunit.framework.dll</HintPath>
@@ -664,11 +664,11 @@
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
  </Reference>
- <Reference Include="UnityEngine.TestRunner">
- <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
- </Reference>
  <Reference Include="UnityEditor.TestRunner">
  <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEditor.TestRunner.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.TestRunner">
+ <HintPath>D:/Workspace/Unity/Modules/Archiver/Library/ScriptAssemblies/UnityEngine.TestRunner.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>
