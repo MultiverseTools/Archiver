@@ -25,7 +25,7 @@ namespace EFAS.Archiver
         /// 每次处理的保存数据的数量
         /// TODO 可配置
         /// </summary>
-        private const int k_batchCount = 10;
+        private const int k_batchCount = 500;
 
         /// <summary>
         /// 当前处理的index
@@ -80,7 +80,7 @@ namespace EFAS.Archiver
                 throw new Exception($"保存路径不存在\n\"{_savePath}\"");
             }
             ProcessStatus  = PROCESS_STATUS.SAVING;
-            await CollectionData(_archiver, _savePath);
+            await InternalSaveArchiver(_archiver, _savePath);
             ProcessStatus  = PROCESS_STATUS.NONE;
         }
 
@@ -131,7 +131,7 @@ namespace EFAS.Archiver
         /// </summary>
         /// <param name="_archiver">存档</param>
         /// <param name="_savePath">存档路径</param>
-        private static async UniTask CollectionData(IArchiver _archiver, string _savePath)
+        private static async UniTask InternalSaveArchiver(IArchiver _archiver, string _savePath)
         {
             using (var jsonTextWriter = new JsonTextWriter(File.CreateText(_savePath)))
             {
