@@ -1,0 +1,63 @@
+// codegen
+
+using System;
+using System.Collections.Generic;
+using EFAS.Archiver;
+
+namespace #NAMESPACE#
+{
+    /// <summary>
+    /// 存档内容
+    /// </summary>
+    [Archiver("#GENERATE_FOLDER_PATH#", Namespace = "#NAMESPACE#")]
+    public class #CLASS_NAME# : IArchiver
+    {
+        /// <summary>
+        /// 存档数据类型字典
+        /// </summary>
+        public Dictionary<string, Type> ArchiverDataTypeMap { get; } = new Dictionary<string, Type>()
+        {
+#ARCHIVER_DATA_TYPE_MAP#
+        };
+
+        /// <summary>
+        /// 版本号
+        /// </summary>
+        [Newtonsoft.Json.JsonProperty]
+        public Version Version { get; set; } = new Version(0, 0, 0, 0);
+
+#ARCHIVER_DATA_SET#
+        
+        /// <summary>
+        /// 添加元素
+        /// </summary>
+        /// <param name="_object">存档元素</param>
+        public void Add(object _object)
+        {
+            switch (_object)
+            {
+#ARCHIVER_DATA_ADD#
+            }
+        }
+
+        /// <summary>
+        /// 添加元素
+        /// </summary>
+        /// <param name="_object">存档元素</param>
+        public void Remove(object _object)
+        {
+            switch (_object)
+            {
+#ARCHIVER_DATA_REMOVE#
+            }
+        }
+        
+        /// <summary>
+        /// 清空存档内容
+        /// </summary>
+        public void Clear()
+        {
+#ARCHIVER_DATA_CLEAR#   
+        }
+    }
+}
