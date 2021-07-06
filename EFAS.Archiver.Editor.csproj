@@ -52,15 +52,15 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverData.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverContentData.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ConstantValue.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\EditorUtils.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ArchiverEditor.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
-     <Compile Include="Assets\Archiver\Editor\Scripts\ScriptContent.cs" />
-     <None Include="Assets\Archiver\Editor\Resources\Archiver\Template\ClassTemplate.txt" />
-     <None Include="Assets\Archiver\Editor\EFAS.Archiver.Editor.asmdef" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\ArchiverData.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\ArchiverContentData.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\Utils\ConstantValue.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\Utils\EditorUtils.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\ArchiverEditor.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\Utils\ResourcesUtils.cs" />
+     <Compile Include="Assets\com.multiversetools.archiver\Editor\Scripts\ScriptContent.cs" />
+     <None Include="Assets\com.multiversetools.archiver\Editor\Resources\Archiver\Template\ClassTemplate.txt" />
+     <None Include="Assets\com.multiversetools.archiver\Editor\EFAS.Archiver.Editor.asmdef" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
