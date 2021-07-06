@@ -34,9 +34,10 @@ namespace EFAS.Archiver.Example
 
         /// <summary>
         /// 升级后的数据
+        /// 只保存AtkSet信息
         /// 0.0.0.1升级数据
         /// </summary>
-        [ArchiverElement] 
+        [ArchiverElement(nameof(Archiver.Example.AtkInfo.AtkSet))]
         public AtkInfo AtkInfo;
 
         /// <summary>
@@ -63,8 +64,10 @@ namespace EFAS.Archiver.Example
     [ArchiverUpgrade("0.0.0.2", nameof(Upgrade0001))]
     public struct AtkInfo
     {
+        [ArchiverElement] 
         public List<int> AtkSet;
 
+        [ArchiverElement] 
         public bool OnePunchKill;
 
         private static AtkInfo Upgrade0001(AtkInfo _source)

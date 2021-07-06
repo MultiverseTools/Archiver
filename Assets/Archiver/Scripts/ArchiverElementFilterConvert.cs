@@ -20,6 +20,13 @@ namespace EFAS.Archiver
         /// </summary>
         private static readonly Dictionary<Type, bool> s_archiverElementMap = new Dictionary<Type, bool>();
 
+        /// <summary>
+        /// 过滤信息
+        /// string: path
+        /// FilterData: 过滤信息
+        /// </summary>
+        private static readonly Dictionary<string, FilterData> s_filterDataMap = new Dictionary<string, FilterData>();
+
         public override void WriteJson(JsonWriter _writer, object? _value, JsonSerializer _serializer)
         {
             if (_value == null)
@@ -27,28 +34,68 @@ namespace EFAS.Archiver
                 _writer.WriteNull();
                 return;
             }
-
             var valueType = _value.GetType();
+            var path = _writer.Path;
+            // 获取过滤信息
+            s_filterDataMap.TryGetValue(path, out var filterData);
             _writer.WriteStartObject();
-
-            foreach (var memberInfo in valueType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
+            // 存档操作所有字段
+            foreach (var fieldInfo in valueType.GetFields(BindingFlags.Instance | BindingFlags.Public))
             {
                 // 过滤不设置ArchiverElementAttribute的字段
-                if (!Attribute.IsDefined(memberInfo, typeof(ArchiverElementAttribute))) continue;
-                if (memberInfo is FieldInfo fieldInfo)
+                var archiverElementAttribute = fieldInfo.GetCustomAttribute<ArchiverElementAttribute>();
+                if (archiverElementAttribute == null) continue;
+
+                // 存在需要过滤的信息
+                if (filterData != null
+                    // 不包含当前处理的字段名称
+                && !filterData.UsingElementName.Contains(fieldInfo.Name))
                 {
-                    // 保存字段值
-                    _WriteValue(memberInfo.Name, fieldInfo.GetValue(_value));
+                    continue;
                 }
-                else if (memberInfo is PropertyInfo propertyInfo)
+
+                if (archiverElementAttribute.UsingElementNameArray.Length > 0 && CheckCanCovert(fieldInfo.FieldType))
                 {
-                    // 保存属性值
-                    _WriteValue(memberInfo.Name, propertyInfo.GetValue(_value));
+                    _SetFilterData(_BuildElementPath(fieldInfo.Name), archiverElementAttribute.UsingElementNameArray);
                 }
+
+                // 保存字段值
+                _WriteValue(fieldInfo.Name, fieldInfo.GetValue(_value));
+            }
+
+            // 存档操作所有属性
+            foreach (var propertyInfo in valueType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            {
+                // 过滤不设置ArchiverElementAttribute的属性
+                var archiverElementAttribute = propertyInfo.GetCustomAttribute<ArchiverElementAttribute>();
+                if (archiverElementAttribute == null) continue;
+
+                // 存在需要过滤的信息
+                if (filterData != null
+                    // 不包含当前处理的属性名称
+                && !filterData.UsingElementName.Contains(propertyInfo.Name))
+                {
+                    continue;
+                }
+
+                if (archiverElementAttribute.UsingElementNameArray.Length > 0 && CheckCanCovert(propertyInfo.PropertyType))
+                {
+                    _SetFilterData(_BuildElementPath(propertyInfo.Name), archiverElementAttribute.UsingElementNameArray);
+                }
+
+                // 保存属性值
+                _WriteValue(propertyInfo.Name, propertyInfo.GetValue(_value));
             }
 
             _writer.WriteEndObject();
 
+            // 移除处理完成后的信息
+            if (filterData != null)
+            {
+                s_filterDataMap.Remove(path);
+            }
+
+            // 写入存档信息
             void _WriteValue(string _name, object _object)
             {
                 _writer.WritePropertyName(_name);
@@ -62,6 +109,28 @@ namespace EFAS.Archiver
                     _serializer.Serialize(_writer, _object);
                 }
             }
+
+            // 构建存档元素路径
+            string _BuildElementPath(string _elementPath)
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return _elementPath;
+                }
+                else
+                {
+                    return $"{path}.{_elementPath}";
+                }
+            }
+
+            // 设置过滤信息
+            void _SetFilterData(string _path, string[] _usingElementNameArray)
+            {
+                s_filterDataMap.Add(_path, new FilterData()
+                {
+                    UsingElementName = new HashSet<string>(_usingElementNameArray)
+                });
+            }
         }
 
         public override object? ReadJson(JsonReader _reader, Type _objectType, object? _existingValue, JsonSerializer _serializer)
@@ -74,28 +143,58 @@ namespace EFAS.Archiver
         {
             // 正在处理序列化阶段
             var isCanConvert = ArchiverManager.ProcessStatus == ArchiverManager.PROCESS_STATUS.SAVING;
-            if (isCanConvert)
+            isCanConvert &= CheckCanCovert(_objectType);
+            return isCanConvert;
+        }
+
+        /// <summary>
+        /// 过滤信息
+        /// </summary>
+        private class FilterData
+        {
+            /// <summary>
+            /// 需要存档操作的元素名称
+            /// </summary>
+            public HashSet<string> UsingElementName;
+        }
+
+        /// <summary>
+        /// true: 能被Convert
+        /// </summary>
+        /// <param name="_type">检测类型</param>
+        /// <returns></returns>
+        private static bool CheckCanCovert(Type _type)
+        {
+            if (_type.IsPrimitive
+            || _type == typeof(string)
+            || _type == typeof(decimal)
+            || _type.IsEnum)
             {
-                if (s_archiverElementMap.TryGetValue(_objectType, out var canConvert))
+                return false;
+            }
+            if (!s_archiverElementMap.TryGetValue(_type, out var isCanConvert))
+            {
+                // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
+                isCanConvert = false;
+
+                foreach (var fieldInfo in _type.GetFields(BindingFlags.Instance | BindingFlags.Public))
                 {
-                    isCanConvert = canConvert;
+                    // 判断字段是否带ArchiverElementAttribute
+                    isCanConvert = fieldInfo.IsDefined(typeof(ArchiverElementAttribute));
+                    if (isCanConvert) break;
                 }
-                else
+
+                if (!isCanConvert)
                 {
-                    // Class/Struct中有且至少有一个字段带[ArchiverElementAttribute]
-                    isCanConvert = false;
-                    foreach (var memberInfo in _objectType.GetMembers(BindingFlags.Instance | BindingFlags.Public))
+                    foreach (var propertyInfo in _type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
                     {
-                        // 判断属性/字段是否带ArchiverElementAttribute
-                        if (memberInfo.MemberType == MemberTypes.Field
-                        || memberInfo.MemberType == MemberTypes.Property)
-                        {
-                            isCanConvert = memberInfo.IsDefined(typeof(ArchiverElementAttribute));
-                        }
+                        // 判断属性是否带ArchiverElementAttribute
+                        isCanConvert = propertyInfo.IsDefined(typeof(ArchiverElementAttribute));
                         if (isCanConvert) break;
                     }
-                    s_archiverElementMap.Add(_objectType, isCanConvert);
                 }
+
+                s_archiverElementMap.Add(_type, isCanConvert);
             }
             return isCanConvert;
         }
