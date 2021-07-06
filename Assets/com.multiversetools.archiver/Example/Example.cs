@@ -19,8 +19,8 @@ namespace EFAS.Archiver.Example
 
         private void Awake()
         {
-            m_archiverPath        = $"{Application.dataPath}/Archiver/Example/Archiver.json";
-            m_upgradeArchiverPath = $"{Application.dataPath}/Archiver/Example/UpgradeArchiver.json";
+            m_archiverPath        = $"{Application.dataPath}/com.multiversetools.archiver/Example/Archiver.json";
+            m_upgradeArchiverPath = $"{Application.dataPath}/com.multiversetools.archiver/Example/UpgradeArchiver.json";
         }
         
         private void Update()
