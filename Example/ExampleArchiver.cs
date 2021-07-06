@@ -8,7 +8,7 @@ namespace EFAS.Archiver.Example
     /// <summary>
     /// 存档内容
     /// </summary>
-    // [Archiver("Assets/Archiver/Example", Namespace = "EFAS.Archiver.Example")]
+    // [Archiver("Assets/com.multiversetools.archiver/Example", Namespace = "EFAS.Archiver.Example")]
     public class ExampleArchiver : IArchiver
     {
         /// <summary>
