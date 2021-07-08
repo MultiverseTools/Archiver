@@ -45,6 +45,14 @@ namespace EFAS.Archiver
         internal static Version LoadingHighestVersion;
 
         /// <summary>
+        /// json 设置
+        /// </summary>
+        private static readonly JsonSerializerSettings s_jsonSerializerSettings = new JsonSerializerSettings
+        {
+            DefaultValueHandling = DefaultValueHandling.Ignore,
+        };
+
+        /// <summary>
         /// 保存指定存档
         /// 注意: 同时只能保存一个存档
         /// </summary>
@@ -153,7 +161,7 @@ namespace EFAS.Archiver
 
                     foreach (var item in iterator)
                     {
-                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None));
+                        jsonTextWriter.WriteRawValue(JsonConvert.SerializeObject(item, Formatting.None, s_jsonSerializerSettings));
 
                         // 同时处理量不能过大
                         await CheckWaitBatch();
@@ -223,7 +231,7 @@ namespace EFAS.Archiver
                             if (string.IsNullOrEmpty(propertyName)) throw new Exception($"属性名称不能为空");
                             var deserializeObjectType = _archiver.ArchiverDataTypeMap[propertyName];
                             // 获取json对应的实体
-                            var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType);
+                            var deserializeObject = JsonConvert.DeserializeObject(json.Substring(startPosition, endPosition - startPosition - 1), deserializeObjectType, s_jsonSerializerSettings);
                             await CheckWaitBatch();
                             // 保存实体
                             _archiver.Add(deserializeObject);
